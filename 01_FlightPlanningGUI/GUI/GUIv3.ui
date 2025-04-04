@@ -1,0 +1,2285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1087</width>
+    <height>680</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>UAS Flight Route Planner v0.66</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">/* Existing styles */
+background-color: rgb(0, 64, 122);
+
+QPushButton {
+    background-color: rgb(139, 139, 139); /* Gray background */
+    color: white;                         /* White text */
+    border-style: solid;
+    border-width: 2px;
+    border-color: #4CAF50;
+    border-radius: 10px;                  /* Rounded corners */
+    padding: 10px;
+    font-size: 16px;
+}
+QPushButton:hover {
+    background-color: #00407A;            /* Darker green background on hover */
+}
+QTabWidget::pane { /* The tab widget frame */
+    border-top: 2px solid #C2C7CB;
+    position: absolute;
+    top: -0.5em;
+    color: #333333;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+QTabBar::tab {
+    background: #E1E1E1;
+    border: 2px solid #C4C4C3;
+    border-bottom-color: #C2C7CB; /* Same as pane color */
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 5px;
+}
+QTabBar::tab:selected, QTabBar::tab:hover {
+    background: #fafafa;
+}
+
+/* Added styles for QDockWidget */
+QDockWidget {
+    border: 1px solid #d3d3d3; /* Light gray border */
+    border-radius: 5px;        /* Rounded corners */
+    background-color: rgba(255, 255, 255, 0.9); /* White background with slight transparency */
+    titlebar-close-icon: url(close.png);
+    titlebar-normal-icon: url(undock.png);
+}
+QDockWidget::title {
+    text-align: left;          /* Aligns title text to the left */
+    background-color: rgba(0, 64, 122, 0.85); /* Slightly transparent background for the title */
+    padding: 5px;
+    border-radius: 5px 5px 0 0; /* Rounded corners on the top */
+}
+
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+  </property>
+  <property name="animated">
+   <bool>true</bool>
+  </property>
+  <property name="dockNestingEnabled">
+   <bool>true</bool>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+   </property>
+   <widget class="QDockWidget" name="dockWidget">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>28</y>
+      <width>187</width>
+      <height>641</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* Base application background */
+* {
+    background-color: rgba(103, 103, 103, 0.9);  /* Uniform background color for all widgets */
+    color: white;  /* Ensures text is visible against the darker background */
+}
+
+QPushButton {
+    background-color: rgb(139, 139, 139); /* Gray background */
+    color: white;                         /* White text */
+    border-style: solid;
+    border-width: 2px;
+    border-color: #4CAF50;
+    border-radius: 10px;                  /* Rounded corners */
+    padding: 10px;
+    font-size: 16px;
+}
+QPushButton:hover {
+    background-color: #45a049;            /* Darker green background on hover */
+}
+
+QTabWidget::pane { /* The tab widget frame */
+    border-top: 2px solid #C2C7CB;
+    position: absolute;
+    top: -0.5em;
+    color: #333333;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+QTabBar::tab {
+    background: #E1E1E1;
+    border: 2px solid #C4C4C3;
+    border-bottom-color: #C2C7CB; /* Same as pane color */
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 5px;
+}
+
+QTabBar::tab:selected, QTabBar::tab:hover {
+    background: #fafafa;
+}
+
+QDockWidget {
+    border: 1px solid #d3d3d3; /* Light gray border */
+    border-radius: 5px;        /* Rounded corners */
+    background-color: rgba(255, 255, 255, 0.9); /* White background with slight transparency */
+}
+
+QDockWidget::title {
+    text-align: left;          /* Aligns title text to the left */
+    background-color: rgba(0, 64, 122, 0.85); /* Slightly transparent background for the title */
+    padding: 5px;
+    border-radius: 5px 5px 0 0; /* Rounded corners on the top */
+}
+
+QTextEdit {
+    border: 1px solid #888; /* Slightly lighter border for visibility */
+    border-radius: 5px;  /* Rounded corners */
+    padding: 2px;
+}
+
+QCheckBox {
+    spacing: 5px; /* Space between the checkbox and its label */
+}
+
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+    background-color: #888; /* Match background color */
+    border-radius: 5px; /* Rounded corners */
+}
+
+QCheckBox::indicator:checked {
+    background-color: #45a049; /* Green for checked state */
+}
+
+QCheckBox::indicator:unchecked {
+    background-color: #bbb; /* Lighter grey for unchecked state */
+}
+/* Styling for Horizontal Sliders */
+QSlider::groove:horizontal {
+    border: 1px solid #555;  /* Dark grey border for better contrast */
+    height: 10px;            /* Slightly thicker groove for better visibility */
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #888, stop:1 #bbb); /* Gradient from darker to lighter grey */
+    margin: 2px 0;
+    border-radius: 5px;     /* Soft rounded corners for the groove */
+}
+
+QSlider::handle:horizontal {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc); /* Light grey gradient for the handle */
+    border: 1px solid #333; /* Dark border for the handle for better visibility */
+    width: 18px;            /* Width of the handle */
+    margin: -2px 0;         /* Allows handle to overlap the groove slightly */
+    border-radius: 9px;     /* Rounded handle for a smoother look */
+    position: absolute;     /* Ensures the handle is correctly positioned over the groove */
+}
+
+QSlider::handle:horizontal:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #fff, stop:1 #ddd); /* Brighter gradient for hover effect */
+    border-color: #080;     /* Greenish border on hover for visual feedback */
+}
+
+/* Styling for Vertical Sliders */
+QSlider::groove:vertical {
+    border: 1px solid #555;
+    width: 10px;            /* Consistent width with horizontal */
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #888, stop:1 #bbb);
+    margin: 0 2px;
+    border-radius: 5px;
+}
+
+QSlider::handle:vertical {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc);
+    border: 1px solid #333;
+    height: 18px;           /* Height matching the horizontal handle's width */
+    margin: 0 -2px;
+    border-radius: 9px;
+}
+
+QSlider::handle:vertical:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #fff, stop:1 #ddd);
+    border-color: #080;
+}
+
+
+QDockWidget {
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    background-color: rgb(103, 103, 103);
+}
+
+QDockWidget::title {
+    font-size: 0pt;
+    padding: 0px;
+    background-color: transparent;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+QDockWidget &gt; QWidget {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+border: 1px solid #d3d3d3;
+    border-radius: 10px;
+   background-color: rgb(103, 103, 103); /* Maintain transparency to see the dock's styling */
+}
+
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+
+
+
+
+
+
+</string>
+    </property>
+    <property name="floating">
+     <bool>false</bool>
+    </property>
+    <property name="features">
+     <set>QDockWidget::DockWidgetMovable</set>
+    </property>
+    <widget class="QWidget" name="dockWidgetContents">
+     <property name="styleSheet">
+      <string notr="true">QTabWidget::pane { /* The tab widget frame */
+    border-top: 2px solid #C2C7CB;
+    position: absolute;
+    top: -0.5em;
+    color: #333333;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+QTabBar::tab {
+    background: #E1E1E1;
+    border: 2px solid #C4C4C3;
+    border-bottom-color: #C2C7CB; /* Same as pane color */
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 5px;
+}
+
+QTabBar::tab:selected {
+    background: #2e8b57; /* New distinct color for active tab */
+    color: white;
+    border-color: #2e8b57; /* Optional: change the border color to match */
+}
+
+
+
+QPushButton {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #54BCEB;                /* New button border color */
+    border-radius: 10px;                  /* Rounded corners */
+    background-color: transparent;        /* Transparent background */
+    color: white;                         /* White text */
+    padding: 10px;
+    font-size: 16px;
+}
+QPushButton:disabled {
+    background-color: #676767;            /* Disabled button color */
+    border-color: #8B8B8B;                /* Disabled button border color */
+}
+QPushButton:hover {
+    background-color: #00407A;            /* Dark blue background on hover */
+}
+
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+     </property>
+     <widget class="QPushButton" name="btn_tab2_print2kmz">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>550</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Export flight routes to KMZ format with specified flight speeds from flight route settings dialog. </string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Output to KMZ</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab2_TopView">
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>60</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>TopView</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnUndo_SZ">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>2</x>
+        <y>270</y>
+        <width>44</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>delete last point</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/Undo.png</normaloff>Ressources/icons/Undo.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnRedo_SZ">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>46</x>
+        <y>270</y>
+        <width>44</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>retrieve last deleted point</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/Redo.png</normaloff>Ressources/icons/Redo.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnSave_SZ">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>134</x>
+        <y>270</y>
+        <width>44</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Save all safety zones</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/Save.png</normaloff>Ressources/icons/Save.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab1_SafetyZones">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>220</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Draw SafetyZones for e.g., vegetation, streets, high voltage lines. Adjust the height in the Flight Route Settings Dialog</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>  Safety Zones</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/safetyZones.png</normaloff>Ressources/icons/safetyZones.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>38</width>
+        <height>24</height>
+       </size>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab1_DrawTrajectory">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>117</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Draw a polyline in the middle of a bridge</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Draw Trajectory</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/Tab1Mapicon.png</normaloff>Ressources/icons/Tab1Mapicon.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>30</width>
+        <height>16</height>
+       </size>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnUndo">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>26</x>
+        <y>167</y>
+        <width>44</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>delete last point</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/Undo.png</normaloff>Ressources/icons/Undo.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnRedo">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>72</x>
+        <y>167</y>
+        <width>44</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>retrieve last deleted point</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/Redo.png</normaloff>Ressources/icons/Redo.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnSave">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>119</x>
+        <y>167</y>
+        <width>44</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>First Confirm Project data on 0) Project Information. save trajectory. </string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/Save.png</normaloff>Ressources/icons/Save.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnAdd_SZ">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>270</y>
+        <width>44</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>add a new safety zone </string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/bt_Add_SZ.png</normaloff>Ressources/icons/bt_Add_SZ.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab1_LoadTrajectory_xlsx">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>60</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Load a .xlsx</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Load from .xlsx</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab0_ConfirmProjectData">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>550</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Build basic directories and fetch available files. base_directory (str): formulates where to find the primary input files  = os.path.join(base_directory, &quot;01_Input&quot;, f&quot;*{bridge_name}*.*&quot;)</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Confirm Project Data</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab0_crosssection">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>60</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string/>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Load cross section</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab1_build_model">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>550</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Build the bridge representation model.</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Build Model</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab1_mark_pillars">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>324</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Draw pillars as lines. Start with a point on the right side of the trajectory.</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Pillars</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnUndo_pillars">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>25</x>
+        <y>369</y>
+        <width>44</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>delete last point</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/Undo.png</normaloff>Ressources/icons/Undo.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnSave_pillars">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>119</x>
+        <y>370</y>
+        <width>44</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Save position of pillars. </string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/Save.png</normaloff>Ressources/icons/Save.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnRedo_pillars">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>72</x>
+        <y>370</y>
+        <width>44</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>retrieve last deleted point</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>Ressources/icons/Redo.png</normaloff>Ressources/icons/Redo.png</iconset>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_tab1">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>171</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Map Viewer:</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_tab2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>171</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>3D Viewer:</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_tab0">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>171</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Project Information:</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab2_Dock_updateFR">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>500</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Update and show flight routes. Use flight Route editor dialog to change settings, then update again.</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Update Flight Routes</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab2_LoadPC">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>120</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Load a point photogrammetric cloud</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Load Point Cloud</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab2_ShowSafetyZones">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>170</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Show and update safety zones drawn on the map. Adjust the height in the Flight Route Settings Dialog</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Show Safety Zones</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab2_Dock_updateTrajectory">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>220</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Update the trajectory based on the picked points on the point cloud. Pick 5 points starting from the start of the bridge, defining the right and left side.</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Save Trajectory</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab1_Dock_loadTrajectory">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>500</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Load trajectory data from json file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Load Trajectory</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_tab2_LoadPLYfromKMZ">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>450</y>
+        <width>171</width>
+        <height>43</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Load a point photogrammetric cloud</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+QToolTip {
+    color: white;
+    background-color:rgb(0, 64, 122);
+    border: 1px solid white;
+}
+</string>
+      </property>
+      <property name="text">
+       <string>Re-import KMZ file</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>0</y>
+      <width>851</width>
+      <height>661</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QTabWidget::pane { /* The background of the tab widget itself */
+    border: 2px solid #54BCEB;            /* New border color */
+    background-color: #00407A;            /* Dark blue background */
+    border-radius: 5px;
+	border: none;                    /* Adds rounded corners to the tab widget */
+}
+QTabBar::tab {
+    background: #00407A;                  /* Dark blue tab background */
+    border: 2px solid #54BCEB;            /* New tab border color */
+    border-bottom-color: #54BCEB;      
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 5px;
+    color: white;                         /* White text for better contrast against the dark background */
+}
+QTabBar::tab:selected, QTabBar::tab:hover {
+    background: #366152;                  /* A slightly lighter shade when selected or hovered */
+    color: white;
+}
+QTabBar::tab:selected {
+    background: #2e8b57;                  /* New distinct color for active tab */
+    color: white;
+    border-color: #2e8b57;                /* Change the border color to match */
+}
+</string>
+    </property>
+    <property name="tabPosition">
+     <enum>QTabWidget::North</enum>
+    </property>
+    <property name="tabShape">
+     <enum>QTabWidget::Rounded</enum>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="tab_0">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <attribute name="title">
+      <string>0) Project Information</string>
+     </attribute>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>841</width>
+        <height>591</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+  border: none;
+}</string>
+      </property>
+      <property name="title">
+       <string/>
+      </property>
+      <widget class="QTextEdit" name="tab0_textEdit1_Photo">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>831</width>
+         <height>281</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTextEdit {
+  border: none;
+}</string>
+       </property>
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;&quot;&gt;Project Information&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:6pt; color:#e7e7e7;&quot;&gt;  &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt;bridge_name = &lt;/span&gt;&lt;span style=&quot; font-family:'Aptos,sans-serif'; font-size:11pt; font-weight:600; color:#55ffff;&quot;&gt;02_Bierstalbrug&lt;/span&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;&quot;&gt;#10_ Woestijnebrug, 11_Leopoldbrug, 12_Beernembrug, 13_Machelenbrug&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt;base_directory = C:\Code\02 FlightPlanning\01_BridgeData&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:6pt; color:#e7e7e7;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;&quot;&gt;Trajectory: &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt;trajectory_heights = &lt;/span&gt;&lt;span style=&quot; font-size:11pt; color:#55ffff;&quot;&gt;[4.1, 5.4, 5.9, 5.4, 4.1]&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt;takeoff_altitude = 8.007&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; color:#6a9955;&quot;&gt;# Approx. height of road surface above starting point, take the altitude ASL into account.Standard values without may be: [4.1, 5.4, 5.9, 5.4, 4.1]&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:6pt; color:#e7e7e7;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;&quot;&gt;Cross-section:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt;input_scale_meters =  17.27, bridge_width = 17.27&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt;epsilonInput = 0.003&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+      <widget class="QGraphicsView" name="graphicsView_crosssection">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>270</y>
+         <width>771</width>
+         <height>301</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QGraphicsView {
+  border: none;
+}</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_1">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <attribute name="title">
+      <string>1) Photogrammemtric Flight</string>
+     </attribute>
+     <widget class="QWebEngineView" name="tab1_QWebEngineView" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>841</width>
+        <height>631</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <attribute name="title">
+      <string>2) Inspection Flights</string>
+     </attribute>
+     <widget class="QWidget" name="widget_tab2" native="true">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>0</y>
+        <width>971</width>
+        <height>621</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <widget class="QLabel" name="Placeholder2">
+       <property name="geometry">
+        <rect>
+         <x>-10</x>
+         <y>10</y>
+         <width>841</width>
+         <height>461</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Placeholder2</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="toggle_button">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>50</y>
+      <width>20</width>
+      <height>621</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #54BCEB;                /* New button border color */
+    border-radius: 10px;                  /* Rounded corners */
+    background-color: #00407A;            /* Dark blue background */
+    color: white;                         /* White text */
+    padding: 10px;
+    font-size: 16px;
+}
+QPushButton:disabled {
+    background-color: #676767;            /* Disabled button color */
+    border-color: #8B8B8B;                /* Disabled button border color */
+}
+QPushButton:hover {
+    background-color: #005F97;            /* Slightly lighter blue background on hover */
+}
+</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>-10</x>
+      <y>-3</y>
+      <width>141</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border: none;  /* This removes the border */
+    background-color: transparent;  /* This makes the background transparent */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>Ressources/icons/kuleuven.png</normaloff>Ressources/icons/kuleuven.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>121</width>
+      <height>160</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="toggle_button_FR">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>650</y>
+      <width>851</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #54BCEB;                /* New button border color */
+    border-radius: 10px;                  /* Rounded corners */
+    background-color: #00407A;            /* Dark blue background */
+    color: white;                         /* White text */
+    padding: 10px;
+    font-size: 16px;
+}
+QPushButton:disabled {
+    background-color: #676767;            /* Disabled button color */
+    border-color: #8B8B8B;                /* Disabled button border color */
+}
+QPushButton:hover {
+    background-color: #005F97;            /* Slightly lighter blue background on hover */
+}
+</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QDockWidget" name="dockWidget_FR">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>304</y>
+      <width>851</width>
+      <height>351</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">/* Base application background */
+* {
+    background-color: rgba(103, 103, 103, 0.9);  /* Uniform background color for all widgets */
+    color: white;  /* Ensures text is visible against the darker background */
+}
+
+QPushButton {
+    background-color: rgb(139, 139, 139); /* Gray background */
+    color: white;                         /* White text */
+    border-style: solid;
+    border-width: 2px;
+    border-color: #4CAF50;
+    border-radius: 10px;                  /* Rounded corners */
+    padding: 10px;
+    font-size: 16px;
+}
+QPushButton:hover {
+    background-color: #45a049;            /* Darker green background on hover */
+}
+
+QTabWidget::pane { /* The tab widget frame */
+    border-top: 2px solid #C2C7CB;
+    position: absolute;
+    top: -0.5em;
+    color: #333333;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+QTabBar::tab {
+    background: #E1E1E1;
+    border: 2px solid #C4C4C3;
+    border-bottom-color: #C2C7CB; /* Same as pane color */
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 5px;
+}
+
+QTabBar::tab:selected, QTabBar::tab:hover {
+    background: #fafafa;
+}
+
+QDockWidget {
+    border: 1px solid #d3d3d3; /* Light gray border */
+    border-radius: 5px;        /* Rounded corners */
+    background-color: rgba(255, 255, 255, 0.9); /* White background with slight transparency */
+}
+
+QDockWidget::title {
+    text-align: left;          /* Aligns title text to the left */
+    background-color: rgba(0, 64, 122, 0.85); /* Slightly transparent background for the title */
+    padding: 5px;
+    border-radius: 5px 5px 0 0; /* Rounded corners on the top */
+}
+
+QTextEdit {
+    border: 1px solid #888; /* Slightly lighter border for visibility */
+    border-radius: 5px;  /* Rounded corners */
+    padding: 2px;
+}
+
+QCheckBox {
+    spacing: 5px; /* Space between the checkbox and its label */
+}
+
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+    background-color: #888; /* Match background color */
+    border-radius: 5px; /* Rounded corners */
+}
+
+QCheckBox::indicator:checked {
+    background-color: #45a049; /* Green for checked state */
+}
+
+QCheckBox::indicator:unchecked {
+    background-color: #bbb; /* Lighter grey for unchecked state */
+}
+/* Styling for Horizontal Sliders */
+QSlider::groove:horizontal {
+    border: 1px solid #555;  /* Dark grey border for better contrast */
+    height: 10px;            /* Slightly thicker groove for better visibility */
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #888, stop:1 #bbb); /* Gradient from darker to lighter grey */
+    margin: 2px 0;
+    border-radius: 5px;     /* Soft rounded corners for the groove */
+}
+
+QSlider::handle:horizontal {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc); /* Light grey gradient for the handle */
+    border: 1px solid #333; /* Dark border for the handle for better visibility */
+    width: 18px;            /* Width of the handle */
+    margin: -2px 0;         /* Allows handle to overlap the groove slightly */
+    border-radius: 9px;     /* Rounded handle for a smoother look */
+    position: absolute;     /* Ensures the handle is correctly positioned over the groove */
+}
+
+QSlider::handle:horizontal:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #fff, stop:1 #ddd); /* Brighter gradient for hover effect */
+    border-color: #080;     /* Greenish border on hover for visual feedback */
+}
+
+/* Styling for Vertical Sliders */
+QSlider::groove:vertical {
+    border: 1px solid #555;
+    width: 10px;            /* Consistent width with horizontal */
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #888, stop:1 #bbb);
+    margin: 0 2px;
+    border-radius: 5px;
+}
+
+QSlider::handle:vertical {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc);
+    border: 1px solid #333;
+    height: 18px;           /* Height matching the horizontal handle's width */
+    margin: 0 -2px;
+    border-radius: 9px;
+}
+
+QSlider::handle:vertical:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #fff, stop:1 #ddd);
+    border-color: #080;
+}
+
+
+QDockWidget {
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    background-color: rgb(103, 103, 103);
+}
+
+QDockWidget::title {
+    font-size: 0pt;
+    padding: 0px;
+    background-color: transparent;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+QDockWidget &gt; QWidget {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+border: 1px solid #d3d3d3;
+    border-radius: 10px;
+   background-color: rgb(103, 103, 103); /* Maintain transparency to see the dock's styling */
+}
+
+
+
+
+
+
+</string>
+    </property>
+    <property name="floating">
+     <bool>false</bool>
+    </property>
+    <property name="features">
+     <set>QDockWidget::DockWidgetMovable</set>
+    </property>
+    <widget class="QWidget" name="dockWidgetContents_FR">
+     <property name="styleSheet">
+      <string notr="true">
+QPushButton {
+    background-color:rgb(139, 139, 139); /* Green background */
+    color: white;             /* White text */
+    border-style: solid;
+    border-width: 2px;
+    border-color: #4CAF50;
+    border-radius: 10px;      /* Rounded corners */
+    padding: 10px;
+    font-size: 16px;
+}
+QPushButton:hover {
+    background-color: #45a049; /* Darker green background on hover */
+}
+QTabWidget::pane { /* The tab widget frame */
+    border-top: 2px solid #C2C7CB;
+    position: absolute;
+    top: -0.5em;
+    color: #333333;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+QTabBar::tab {
+    background: #E1E1E1;
+    border: 2px solid #C4C4C3;
+    border-bottom-color: #C2C7CB; /* Same as pane color */
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 5px;
+}
+
+QTabBar::tab:selected {
+    background: #2e8b57; /* New distinct color for active tab */
+    color: white;
+    border-color: #2e8b57; /* Optional: change the border color to match */
+}</string>
+     </property>
+     <widget class="QTextEdit" name="tab0_textEdit1_Photo_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>621</width>
+        <height>311</height>
+       </rect>
+      </property>
+      <property name="html">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;&quot;&gt;Flight Route Settings&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;&quot;&gt;Photogrammetric flight: &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;flight_route_offset_V_base&lt;/span&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt; = 10		&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;flight_route_offset_H_base&lt;/span&gt;&lt;span style=&quot; font-size:11pt; color:#9cdcfe;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt;= 5		&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;photogrammetric_flight_angle&lt;/span&gt;&lt;span style=&quot; font-size:11pt; color:#9cdcfe;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt;= 0&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;order&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; [&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;101&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;reverse 101&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;102&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;reverse 102&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;,&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;    underdeck_safe_flythrough,&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;    &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;201&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;reverse 201&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;202&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;reverse 202&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;]&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;&quot;&gt;Underdeck flights: &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;num_points&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; [&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;3&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;, 7, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;3&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;] &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# Base points per section &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;horizontal_offsets_underdeck&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; [13, 13, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;13&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;]&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# H_Offest of base points &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;height_offsets_underdeck&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; [[5.25, 5.5, 6], [6, 5.5, 5.25, 5, 5.25, 5.5, 6], [6, 5.55, 5.2]] &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# Vertical offset from trajectory, consider slab&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;general_height_offset&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;= 1&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;thresholds_zones&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; [(1&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;, 5), (7, 7), (5, 1&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;)] &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# Threshold distance &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;custom_zone_angles = &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;[] &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;# &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;[2.16, 2.20, 2.24]&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:8pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# Adjust angle &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;&quot;&gt;Safety Zones:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;safety_zones_clearance&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; [[&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;,20],[&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;,20],[&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;,20],[&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;,20]] &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;#min, max local&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;safety_zones_clearance_adjust&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; [[20],[20],[20],[20]] &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# adjust points inside zones. 0 = delete points, -1 find closest exit&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;&quot;&gt;Export Modus:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;heightMode = &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;relativeToStartPoint &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# or EGM96&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;&quot;&gt;Additional features:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; color:#9cdcfe;&quot;&gt;flythrough_underdeck_PF&lt;/span&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt; = True	&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# Not implemented&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;nsamplePointsTrajectory&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt;50	&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# smooth trajectory quadraticly&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;perpendicular_distances&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; [0, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;]&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# Not implemented&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;connection_height &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;= &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;20	&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# vertical flight height for connections&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;self&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;.&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;num_passes&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;2		&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# num passes underdeck flighs&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;safety_check_photo &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;= 1&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;safety_check_underdeck &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;= [[0],[0],[0]] &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# 1 = execute safety check. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;safety_check_underdeck_axial &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;= [[0],[0],[0]] &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;# 1 = execute safety check.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; color:#9cdcfe;&quot;&gt;n_girders&lt;/span&gt;&lt;span style=&quot; font-size:11pt; color:#e7e7e7;&quot;&gt; = 5&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;standard_flight_routes&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; {&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;101&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;vertical_offset&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: 8, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;distance_offset&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;5&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;102&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;vertical_offset&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;3&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;distance_offset&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;2&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;201&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;vertical_offset&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: 8, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;distance_offset&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: 5},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;202&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;vertical_offset&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;3&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;distance_offset&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;&quot;&gt;2&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;}}&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;&quot;&gt;flight_speed_map&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;&quot;&gt;=&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; {&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;101&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;6&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;102&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;4&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;201&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;6&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;202&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;4&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;103&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;3&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;203&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;3&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;104&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;3&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;105&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;2&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;204&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;3&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;205&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;2&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;underdeck_1&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;0.8&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;underdeck_2&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;underdeck_3&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;0.8&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},	 &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;axial_underdeck_1&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;axial_underdeck_2&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;axial_underdeck_3&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;},&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;underdeck_safe_flythrough&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: {&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;speed&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;: &lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;&quot;&gt;&amp;quot;2&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;&quot;&gt;}}}&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="layoutWidget_4">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>20</y>
+        <width>201</width>
+        <height>283</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_9">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Y offset:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QSlider" name="slider_offset_Y">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickInterval">
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QSlider" name="slider_offset_Z">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickInterval">
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="gridLayout_10">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetMaximumSize</enum>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <item row="3" column="0">
+          <widget class="QSlider" name="slider_offset_X">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="tickInterval">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0" rowspan="2">
+          <widget class="QLineEdit" name="text_slider_offset_X">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="text">
+            <string>0</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>X offset:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelPF">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>Transformation</string>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QComboBox" name="comboBox_FlightRoutes_transform"/>
+         </item>
+        </layout>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label2_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Z offset:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLineEdit" name="text_slider_offset_Z">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLineEdit" name="text_slider_offset_Y">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string/>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>-7</y>
+      <width>71</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string notr="true"/>
+    </property>
+    <property name="accessibleDescription">
+     <string notr="true"/>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::RightToLeft</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    border: none;  /* This removes the border */
+    background-color: transparent;  /* This makes the background transparent */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>Ressources/icons/FWO.png</normaloff>Ressources/icons/FWO.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>61</width>
+      <height>65</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="background_button_2">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1111</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="accessibleDescription">
+     <string notr="true"/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: rgb(29, 141, 176); /* Custom color */
+    color: white; /* Text color */
+    border-style: none; /* No borders */
+    border-radius: 0px; /* No rounding for this example, change if needed */
+    font-size: 16px; /* Larger font size for visibility */
+    text-align: center; /* Center the text */
+    padding: 10px; /* Padding around the text */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="background_button_5">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>-30</x>
+      <y>0</y>
+      <width>261</width>
+      <height>681</height>
+     </rect>
+    </property>
+    <property name="accessibleDescription">
+     <string notr="true"/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: rgb(29, 141, 176); /* Custom color */
+    color: white; /* Text color */
+    border-style: none; /* No borders */
+    border-radius: 0px; /* No rounding for this example, change if needed */
+    font-size: 16px; /* Larger font size for visibility */
+    text-align: center; /* Center the text */
+    padding: 10px; /* Padding around the text */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="background_button">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>-16</x>
+      <y>662</y>
+      <width>1128</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="accessibleDescription">
+     <string notr="true"/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: rgb(29, 141, 176); /* Custom color */
+    color: white; /* Text color */
+    border-style: none; /* No borders */
+    border-radius: 0px; /* No rounding for this example, change if needed */
+    font-size: 16px; /* Larger font size for visibility */
+    text-align: center; /* Center the text */
+    padding: 10px; /* Padding around the text */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="background_button_3">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1071</x>
+      <y>60</y>
+      <width>41</width>
+      <height>631</height>
+     </rect>
+    </property>
+    <property name="accessibleDescription">
+     <string notr="true"/>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background-color: rgb(29, 141, 176); /* Custom color */
+    color: white; /* Text color */
+    border-style: none; /* No borders */
+    border-radius: 0px; /* No rounding for this example, change if needed */
+    font-size: 16px; /* Larger font size for visibility */
+    text-align: center; /* Center the text */
+    padding: 10px; /* Padding around the text */
+}</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <zorder>background_button</zorder>
+   <zorder>background_button_3</zorder>
+   <zorder>background_button_2</zorder>
+   <zorder>background_button_5</zorder>
+   <zorder>dockWidget</zorder>
+   <zorder>tabWidget</zorder>
+   <zorder>toggle_button</zorder>
+   <zorder>pushButton</zorder>
+   <zorder>dockWidget_FR</zorder>
+   <zorder>pushButton_2</zorder>
+   <zorder>toggle_button_FR</zorder>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebEngineView</class>
+   <extends>QWidget</extends>
+   <header>QtWebEngineWidgets/QWebEngineView</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="Ressources/Ressources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

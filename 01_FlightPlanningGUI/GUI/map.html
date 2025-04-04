@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Map with Features</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-draw/dist/leaflet.draw.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css"/>
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <style>
+        #map { height: 100vh; width: 100vw; }
+    </style>
+</head>
+<body>
+    <div style="position: absolute; top: 10px; left: 70px; z-index: 1000; background: white; padding: 10px;">
+        <input type="text" id="searchInput" placeholder="Enter location">
+        <button onclick="searchLocationAndZoom($('#searchInput').val())">Search</button>
+    </div>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([51.05665315215064, 3.7139895528739526], 10);
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        var satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            attribution: 'Imagery © Google'
+        });
+        L.control.layers({
+            "OpenStreetMap": osmLayer,
+            "Satellite": satelliteLayer
+        }).addTo(map);
+		
+		// Initialize layers for trajectories and safety zones
+        var trajectoryLayer = L.layerGroup().addTo(map);
+        var safetyZoneLayer = L.layerGroup().addTo(map);
+		var pillarLayer = L.layerGroup().addTo(map);
+
+
+		new QWebChannel(qt.webChannelTransport, function(channel) {
+			window.bridge = channel.objects.bridge;
+			console.log("Bridge has been connected", bridge);
+
+			map.on('click', function(e) {
+				var clickedCoordinates = [e.latlng.lat, e.latlng.lng];
+				console.log("Sending coordinates:", clickedCoordinates); // Debug line
+				bridge.handle_coordinates(JSON.stringify(clickedCoordinates));
+			});
+
+			bridge.updateTrajectory.connect(function(data) {
+				console.log("Received trajectory data:", data);  // Add for debugging
+				var coordinates = JSON.parse(data);
+				console.log("Parsed trajectory coordinates:", coordinates);  // Debug parsing
+				drawTrajectory(coordinates);
+			});
+
+			bridge.updateSafetyZones.connect(function(data) {
+				console.log("Received safety zones data:", data);  // Add for debugging
+				var coordinates = JSON.parse(data);
+				console.log("Parsed safety zones coordinates:", coordinates);  // Debug parsing
+				drawSafetyZones(coordinates);
+			});
+			bridge.updatePillars.connect(function(data) {
+				console.log("Received pillar data:", data);  // For debugging
+				var coordinates = JSON.parse(data);
+				console.log("Parsed pillar coordinates:", coordinates);  // For parsing debug
+				drawPillars(coordinates);
+			});
+			
+		});
+
+
+		function drawTrajectory(coordinates) {
+			trajectoryLayer.clearLayers(); // Clear existing trajectories
+			if (coordinates.length) {
+				var polyline = L.polyline(coordinates, {color: 'orange'}).addTo(trajectoryLayer);
+				//map.fitBounds(polyline.getBounds());
+			} else {
+				console.log("No coordinates to draw for trajectory.");
+			}
+		}
+		function drawPillars(data) {
+			pillarLayer.clearLayers();  // Clear existing layers only when updating
+
+			let currentPillar = [];
+			data.forEach(function(point, index) {
+				if (point[0] === 0 && point[1] === 0) {
+					// Skip the delimiter but use it as a signal to reset for new pillar data
+					if (currentPillar.length === 2) {
+						var polyline = L.polyline(currentPillar, {color: 'green'}).addTo(pillarLayer);
+					}
+					currentPillar = [];  // Reset after drawing
+				} else {
+					// Add point to current pillar
+					currentPillar.push(point);
+					// Draw if two points have been added
+					if (currentPillar.length === 2) {
+						var polyline = L.polyline(currentPillar, {color: 'green'}).addTo(pillarLayer);
+						currentPillar = [];  // Reset after drawing
+					}
+				}
+			});
+
+			// Optionally, adjust the view to fit all drawn lines
+			if (pillarLayer.getLayers().length > 0) {
+				map.fitBounds(pillarLayer.getBounds());
+			}
+		}
+
+
+		function drawSafetyZones(data) {
+			safetyZoneLayer.clearLayers(); // Clear existing safety zones
+			let zones = [];
+			let currentZone = [];
+			data.forEach(function(point) {
+				if (point[0] === 0 && point[1] === 0) {  // Check for delimiter
+					if (currentZone.length > 0) {
+						zones.push(currentZone);
+						currentZone = [];
+					}
+				} else {
+					currentZone.push(point);
+				}
+			});
+			if (currentZone.length > 0) zones.push(currentZone);  // Add the last zone if not empty
+
+			zones.forEach(function(zone) {
+				if (zone.length) {
+					var polygon = L.polygon(zone, {color: 'red', fillOpacity: 0.5}).addTo(safetyZoneLayer);
+				}
+			});
+			if (zones.length) {
+				map.fitBounds(safetyZoneLayer.getBounds());
+			} else {
+				console.log("No coordinates to draw for safety zones.");
+			}
+		}
+        function searchLocationAndZoom(address) {
+            var apiKey = '6369ee6006bc4217ac32dd9c7096be25';
+            var apiURL = 'https://api.opencagedata.com/geocode/v1/json';
+            $.getJSON(apiURL, { q: address, key: apiKey, limit: 1 })
+                .done(function(data) {
+                    if (data.results && data.results.length > 0) {
+                        var result = data.results[0];
+                        var latLng = new L.LatLng(result.geometry.lat, result.geometry.lng);
+                        map.setView(latLng, 13);
+                        L.marker(latLng).addTo(map).bindPopup(address).openPopup();
+                    } else {
+                        alert("Location not found");
+                    }
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    alert("Request failed: " + textStatus + "\n" + errorThrown);
+                });
+        }
+    </script>
+</body>
+</html>
