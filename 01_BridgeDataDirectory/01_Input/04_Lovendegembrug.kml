@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <Style id="style1">
+      <LineStyle>
+        <color>ffe1e1e1</color>
+        <width>3</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>ffe1e1e1</color>
+        <fill>false</fill>
+      </PolyStyle>
+    </Style>
+    <Folder>
+      <name>Layer</name>
+      <styleUrl>#style1</styleUrl>
+      <Placemark>
+        <name>Right</name>
+        <description/>
+        <LineString>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>3.6037470253,51.0904238072,12.2176998 3.6036842251,51.0906876485,13.7715527 3.6035860884,51.0909755473,13.3288123 3.6035053399,51.0912459363,13.5984365 3.6034169124,51.0915497013,12.4167312</coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>Left</name>
+        <description/>
+        <LineString>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>3.6034850043,51.0903951841,12.1209856 3.6033839624,51.0906927945,13.5254267 3.6032998802,51.0909956375,14.1844475 3.6032276560,51.0912526074,13.567161 3.6031557307,51.0915429115,12.2510808</coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>
