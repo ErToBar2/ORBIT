@@ -3,7 +3,7 @@
 
 ORBIT computes waypoint files to facilitate **drone-based bridge inspections** from minimal input.
 
-The generated waypoint files let a UAS automatically execute flight routes **around** and **under** bridges (and related infrastructure such as roads/overpasses) while **addressing domain-specific challenges under real-world constraints**, facilitating downstream tasks such as processing **photogrammetric 3D brdige models** and automatic **damage detection** tasks.
+The generated waypoint files let a UAS automatically execute flight routes **around** and **under** bridges (and related infrastructure such as roads/overpasses) while **addressing domain-specific challenges under real-world constraints**, facilitating downstream tasks such as processing **photogrammetric 3D bridge models** and automatic **damage detection** tasks.
 
 ## Key features
 - **Coverage planning for bridges:** Plan flight routes from satellite-map input using the approximate bridge axis and pier positions.
