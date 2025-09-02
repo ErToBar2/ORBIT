@@ -25,6 +25,7 @@ Bartczak, E. T.*, Bassier, M., Vergauwen, M. (2025). ORBIT: Optimized Routing fo
 #### Installation
 use the environment.yml file:
 cd to the main folder
-conda env create -f environment.yml
+
+**conda env create -f environment.yml**
 
 Note that the QTWebengine can be problematic. For a windows machine, the yml should work fine. Pip can be problematic.
