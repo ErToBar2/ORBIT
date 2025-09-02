@@ -1,0 +1,19 @@
+preferred-citation:
+  type: conference-paper
+  title: "ORBIT: Optimized Routing for Bridge Inspection Toolkit. An open-source UAS flight path planning tool for comprehensive bridge inspections under realistic constraints"
+  authors:
+    - family-names: Bartczak
+      given-names: Erkki Tobias
+    - family-names: Bassier
+      given-names: Maarten
+    - family-names: Vergauwen
+      given-names: Maarten
+  year: 2025
+  collection-title: "The International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences (ISPRS Archives)"
+  conference:
+    name: "UAV-g 2025"
+    location: "Aalto University, Espoo, Finland"
+    date-start: 2025-09-10
+    date-end: 2025-09-12
+  doi: "TBA"
+  notes: "Forthcoming; update DOI/volume/pages when available."
