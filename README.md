@@ -2,7 +2,7 @@
 **An open-source UAS flight path planning tool for comprehensive bridge inspections under realistic constraints.**
 
 ORBIT plans drone flight waypoint files for automated flight routes around bridges and other infrastructure to achieve 
-**complete, repeatable coverage** of bridge assets while respecting real-world constraints.
+complete, repeatable coverage of bridge assets while respecting real-world constraints.
 It exports deliverables you can visualize (ply files) and use as the basis for flights (.KML and KMZ).
 
 > This repository is released under the **Apache License 2.0**.
