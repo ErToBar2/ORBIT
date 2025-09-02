@@ -1,0 +1,522 @@
+{
+  "metadata": {
+    "created_date": "2025-08-30T12:25:07.644689",
+    "program_version": "ORBIT v0.98c.py",
+    "save_type": "complete_program_state",
+    "snapshot_version": 1
+  },
+  "project_settings": {
+    "bridge_name": "TestBridge",
+    "import_dir": "C:\\Code\\01_FlightPlanningGUI\\Orbitv0.98c\\ExampleProject\\ImportFolder",
+    "project_dir_base": "C:\\Code\\02 FlightPlanning\\01_BridgeData",
+    "trajectory_heights": "[5, 5, 5, 5, 5] # Approx. height of bridge trajectory above starting point, quadratic approx.",
+    "ground_elevation": 0,
+    "input_scale_meters": 14.05,
+    "bridge_width": 14.05,
+    "epsilonInput": 0.003,
+    "coordinate_system": "Lambert72",
+    "trajectory_points_count": 5,
+    "pillars_count": 4,
+    "trajectory_length": 122.21,
+    "average_pillar_height": 6.99,
+    "epsg_code": 31370
+  },
+  "flight_route_settings": {
+    "transition_mode": 2,
+    "num_passes": 2,
+    "safety_check_photo": 1,
+    "n_girders": 3,
+    "underdeck_split": 1,
+    "underdeck_axial": 0,
+    "droneEnumValue": 77,
+    "payloadEnumValue": 66,
+    "connection_height": 20.0,
+    "general_height_offset": 1.0,
+    "transition_vertical_offset": 15.0,
+    "transition_horizontal_offset": 15.0,
+    "heightStartingPoint_Ellipsoid": 0.0,
+    "heightStartingPoint_Reference": 0.0,
+    "order": [
+      "101",
+      "r102",
+      "transition_mode",
+      "201",
+      "r202"
+    ],
+    "num_points": [
+      3,
+      7,
+      3
+    ],
+    "horizontal_offsets_underdeck": [
+      13,
+      13,
+      13
+    ],
+    "custom_zone_angles": [],
+    "thresholds_zones": [
+      [
+        10,
+        10
+      ],
+      [
+        10,
+        10
+      ],
+      [
+        10,
+        10
+      ]
+    ],
+    "safety_check_underdeck": [
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        0
+      ]
+    ],
+    "safety_check_underdeck_axial": [
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        0
+      ]
+    ],
+    "height_offsets_underdeck": [
+      [
+        5,
+        5,
+        5
+      ],
+      [
+        5,
+        5,
+        5
+      ],
+      [
+        5,
+        5,
+        5
+      ]
+    ],
+    "safety_zones_clearance": [
+      [
+        0,
+        20
+      ],
+      [
+        15,
+        30
+      ],
+      [
+        10,
+        20
+      ]
+    ],
+    "safety_zones_clearance_adjust": [
+      [
+        21
+      ],
+      [
+        14
+      ],
+      [
+        20
+      ],
+      [
+        20
+      ]
+    ],
+    "standard_flight_routes": {
+      "101": {
+        "vertical_offset": 8,
+        "distance_offset": 5
+      },
+      "102": {
+        "vertical_offset": 3,
+        "distance_offset": 2
+      },
+      "201": {
+        "vertical_offset": 8,
+        "distance_offset": 5
+      },
+      "202": {
+        "vertical_offset": 3,
+        "distance_offset": 2
+      }
+    },
+    "flight_speed_map": {
+      "101": {
+        "speed": "6"
+      },
+      "102": {
+        "speed": "4"
+      },
+      "201": {
+        "speed": "6"
+      },
+      "202": {
+        "speed": "4"
+      },
+      "103": {
+        "speed": "3"
+      },
+      "203": {
+        "speed": "3"
+      },
+      "104": {
+        "speed": "3"
+      },
+      "105": {
+        "speed": "2"
+      },
+      "204": {
+        "speed": "3"
+      },
+      "205": {
+        "speed": "2"
+      },
+      "transition": {
+        "speed": "2.5"
+      },
+      "underdeck_span1": {
+        "speed": "0.8"
+      },
+      "underdeck_span2": {
+        "speed": "0.85"
+      },
+      "underdeck_span3": {
+        "speed": "0.8"
+      },
+      "connection": {
+        "speed": "2.5"
+      },
+      "axial_span1": {
+        "speed": "1.0"
+      },
+      "axial_span2": {
+        "speed": "1.0"
+      },
+      "axial_span3": {
+        "speed": "1.0"
+      }
+    },
+    "heightMode": "EGM96"
+  },
+  "current_geometry": {
+    "trajectory_points": [
+      [
+        51.070992248734285,
+        3.6569306436974136
+      ],
+      [
+        51.07114738387199,
+        3.6572681562105247
+      ],
+      [
+        51.07130240777636,
+        3.657610688841933
+      ],
+      [
+        51.07146566172662,
+        3.657967255582653
+      ],
+      [
+        51.07163521827471,
+        3.658344351371192
+      ],
+      [
+        51.071608819444855,
+        3.6587691307067876
+      ]
+    ],
+    "pillars": [
+      {
+        "id": "IP1A",
+        "lat": 51.071216293149085,
+        "lon": 3.657282381529247
+      },
+      {
+        "id": "IP1B",
+        "lat": 51.07109526732874,
+        "lon": 3.6572904627117406
+      },
+      {
+        "id": "IP2A",
+        "lat": 51.07153406289418,
+        "lon": 3.657990407337762
+      },
+      {
+        "id": "IP2B",
+        "lat": 51.071416660384365,
+        "lon": 3.6579937500122046
+      }
+    ],
+    "safety_zones": [
+      {
+        "id": "SZ0",
+        "points": [
+          [
+            51.07160544872007,
+            3.657363653182984
+          ],
+          [
+            51.07099197272471,
+            3.658109307289124
+          ],
+          [
+            51.070675119300596,
+            3.6571705341339116
+          ],
+          [
+            51.071315565472,
+            3.6561459302902226
+          ]
+        ]
+      },
+      {
+        "id": "SZ2",
+        "points": [
+          [
+            51.07158859509257,
+            3.656837940216065
+          ],
+          [
+            51.07074253510442,
+            3.6578249931335454
+          ],
+          [
+            51.07115039862327,
+            3.658758401870728
+          ],
+          [
+            51.071827916027864,
+            3.657739162445069
+          ]
+        ]
+      }
+    ],
+    "safety_zones_resolved": [
+      {
+        "id": "SZ0",
+        "points": [
+          [
+            51.07160544872007,
+            3.657363653182984
+          ],
+          [
+            51.07099197272471,
+            3.658109307289124
+          ],
+          [
+            51.070675119300596,
+            3.6571705341339116
+          ],
+          [
+            51.071315565472,
+            3.6561459302902226
+          ]
+        ],
+        "z_min": 0.0,
+        "z_max": 20.0
+      },
+      {
+        "id": "SZ2",
+        "points": [
+          [
+            51.07158859509257,
+            3.656837940216065
+          ],
+          [
+            51.07074253510442,
+            3.6578249931335454
+          ],
+          [
+            51.07115039862327,
+            3.658758401870728
+          ],
+          [
+            51.071827916027864,
+            3.657739162445069
+          ]
+        ],
+        "z_min": 15.0,
+        "z_max": 30.0
+      }
+    ],
+    "current_zone_points": [],
+    "cross_section_points": [
+      [
+        7.918352601156069,
+        0.14889210019267823
+      ],
+      [
+        7.742389210019268,
+        0.0
+      ],
+      [
+        5.644364161849711,
+        0.013535645472061658
+      ],
+      [
+        5.630828516377649,
+        0.14889210019267823
+      ],
+      [
+        -5.820327552986513,
+        0.14889210019267823
+      ],
+      [
+        -5.833863198458575,
+        0.013535645472061658
+      ],
+      [
+        -6.997928709055877,
+        0.013535645472061658
+      ],
+      [
+        -7.011464354527939,
+        0.46021194605009635
+      ],
+      [
+        -4.250192678227361,
+        0.6091040462427746
+      ],
+      [
+        -4.1013005780346825,
+        1.7190269749518305
+      ],
+      [
+        -2.1521676300578036,
+        1.7190269749518305
+      ],
+      [
+        -1.976204238921002,
+        0.6226396917148362
+      ],
+      [
+        0.18949903660886322,
+        0.473747591522158
+      ],
+      [
+        2.6935934489402698,
+        0.6361753371868979
+      ],
+      [
+        2.883092485549133,
+        1.7460982658959538
+      ],
+      [
+        4.805154142581888,
+        1.7460982658959538
+      ],
+      [
+        5.06233140655106,
+        0.6903179190751445
+      ],
+      [
+        7.607032755298651,
+        0.5414258188824663
+      ]
+    ],
+    "counts": {
+      "trajectory_points": 6,
+      "pillars": 4,
+      "safety_zones": 2,
+      "zone_points": 0,
+      "cross_section_points": 18
+    }
+  },
+  "coordinate_system": {
+    "selected_system": "Lambert72",
+    "context_available": true,
+    "transform_function_available": true,
+    "last_project_coordinate_system": "LocalMetric_51.071N_3.658E"
+  },
+  "bridge_model": {
+    "bridge_object_available": true,
+    "context_object_available": true,
+    "cross_section_path": "C:\\Code\\01_FlightPlanningGUI\\Orbitv0.98c\\ExampleProject\\ImportFolder\\TestBridge_crosssection.png",
+    "cross_section_processed": true
+  },
+  "flight_routes": {
+    "overview_waypoints_available": true,
+    "underdeck_waypoints_available": false,
+    "overview_waypoints_count": 31,
+    "underdeck_waypoints_count": 0
+  },
+  "ui_state": {
+    "current_tab": 2,
+    "drawing_mode": "safety_zones",
+    "current_zone_id": 3,
+    "visualizer_available": true
+  },
+  "parsed_data_state": {
+    "project_keys": [
+      "bridge_name",
+      "import_dir",
+      "project_dir_base",
+      "trajectory_heights",
+      "ground_elevation",
+      "input_scale_meters",
+      "bridge_width",
+      "epsilonInput",
+      "coordinate_system",
+      "trajectory_points_count",
+      "pillars_count",
+      "trajectory_length",
+      "average_pillar_height",
+      "epsg_code"
+    ],
+    "flight_route_keys": [
+      "transition_mode",
+      "num_passes",
+      "safety_check_photo",
+      "n_girders",
+      "underdeck_split",
+      "underdeck_axial",
+      "droneEnumValue",
+      "payloadEnumValue",
+      "connection_height",
+      "general_height_offset",
+      "transition_vertical_offset",
+      "transition_horizontal_offset",
+      "heightStartingPoint_Ellipsoid",
+      "heightStartingPoint_Reference",
+      "order",
+      "num_points",
+      "horizontal_offsets_underdeck",
+      "custom_zone_angles",
+      "thresholds_zones",
+      "safety_check_underdeck",
+      "safety_check_underdeck_axial",
+      "height_offsets_underdeck",
+      "safety_zones_clearance",
+      "safety_zones_clearance_adjust",
+      "standard_flight_routes",
+      "flight_speed_map",
+      "heightMode"
+    ]
+  },
+  "safety_validation": {
+    "safety_zones_exist": true,
+    "safety_check_photo_enabled": true,
+    "safety_check_underdeck_enabled": false
+  },
+  "file_paths": {
+    "project_directory": "C:\\Code\\02 FlightPlanning\\01_BridgeData\\TestBridge",
+    "input_directory": "C:\\Code\\02 FlightPlanning\\01_BridgeData\\TestBridge\\01_Input",
+    "visualization_directory": "C:\\Code\\02 FlightPlanning\\01_BridgeData\\TestBridge\\02_Visualization",
+    "temp_directory": "C:\\Code\\02 FlightPlanning\\01_BridgeData\\TestBridge\\02_Visualization\\temp",
+    "last_save_directory": "C:\\Code\\02 FlightPlanning\\01_BridgeData\\TestBridge\\02_Visualization\\temp",
+    "last_bridge_name": "TestBridge"
+  }
+}

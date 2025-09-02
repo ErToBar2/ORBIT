@@ -1,0 +1,10 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>icons/bt_Add_SZ.png</file>
+    <file>icons/icon.ico</file>
+    <file>icons/Redo.png</file>
+    <file>icons/Save.png</file>
+    <file>icons/Sponsors.png</file>
+    <file>icons/Undo.png</file>
+  </qresource>
+</RCC>

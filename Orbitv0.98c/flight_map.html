@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ORBIT Flight Planning Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; }
+        #map { height: 100%; width: 100%; }
+        .search-container {
+            position: absolute; top: 10px; left: 70px; z-index: 1000;
+            background: white; padding: 10px; border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Enter location" style="width: 200px;">
+        <button onclick="searchLocationAndZoom()" style="margin-left: 5px;">Search</button>
+    </div>
+    <div id="map"></div>
+    <script>
+        console.log('Initializing ORBIT map...');
+        
+        // Create map centered on Belgium (good default for bridge inspection)
+        var map = L.map('map').setView([50.8503, 4.3517], 10);
+        console.log('Map created');
+        
+        // Add OpenStreetMap tiles
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Add satellite layer option
+        var satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            attribution: 'Imagery © Google'
+        });
+        
+        // Layer control
+        L.control.layers({
+            "OpenStreetMap": osmLayer,
+            "Satellite": satelliteLayer
+        }).addTo(map);
+        
+        console.log('Map layers configured');
+        
+        // Search functionality
+        function searchLocationAndZoom() {
+            var address = document.getElementById('searchInput').value;
+            if (!address) return;
+            
+            // Using Nominatim (OpenStreetMap) geocoding service
+            var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address);
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        var result = data[0];
+                        var lat = parseFloat(result.lat);
+                        var lon = parseFloat(result.lon);
+                        map.setView([lat, lon], 15);
+                        L.marker([lat, lon]).addTo(map)
+                            .bindPopup(address)
+                            .openPopup();
+                        console.log('Searched location: ' + address + ' -> ' + lat + ', ' + lon);
+                    } else {
+                        alert('Location not found: ' + address);
+                    }
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    alert('Search failed');
+                });
+        }
+        
+        // Allow search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchLocationAndZoom();
+            }
+        });
+        
+        // WebChannel will be initialized from Qt side after page load
+        window.initWebChannelFromQt = function() {
+            if (typeof qt !== 'undefined' && qt.webChannelTransport) {
+                console.log('Initializing WebChannel from Qt...');
+                new QWebChannel(qt.webChannelTransport, function(channel) {
+                    window.bridge = channel.objects.bridge;
+                    console.log('SUCCESS: WebChannel bridge connected and ready!');
+                });
+            } else {
+                console.log('ERROR: Qt WebChannel transport not available');
+            }
+        };
+        
+        console.log('ORBIT map initialization complete');
+    </script>
+</body>
+</html>
