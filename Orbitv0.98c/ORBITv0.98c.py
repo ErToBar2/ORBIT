@@ -8581,7 +8581,7 @@ def setup_crash_detection():
 def main():
     """Main application entry point with comprehensive crash detection."""
     debug_print("🚀 ======= ORBIT APPLICATION STARTING =======")
-    debug_print(f"🚀 Application version: ORBIT v0.97b")
+    debug_print(f"🚀 Application version: ORBIT v0.98c")
     debug_print(f"🚀 Python version: {sys.version}")
     debug_print(f"🚀 Platform: {sys.platform}")
     debug_print(f"🚀 Working directory: {os.getcwd()}")
