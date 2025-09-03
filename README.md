@@ -26,10 +26,10 @@ Bartczak, E. T.*, Bassier, M., Vergauwen, M. (2025). ORBIT: Optimized Routing fo
 
 ### Installation
 use the environment.yml file:
-cd to the main folder
-**conda env create -n Orbit -f orbit-environment.yml**
-In Anaconda prompt 3, the satellite map on tab 2 might not show just yet.
-In that case, run the .py file in Visual Studio. 
-Now it should run as well from Anaconda. 
+- cd to the main folder
+- **conda env create -n Orbit -f orbit-environment.yml**
+- In Anaconda prompt 3, the satellite map on tab 2 might not show just yet.
+- In that case, run the .py file in Visual Studio. 
+- Now it should run as well from Anaconda. 
 
 Note that the QTWebengine can be problematic. For a windows machine, the yml should work fine. Pip can be problematic.
