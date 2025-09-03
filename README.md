@@ -24,7 +24,7 @@ This work is part of an ISPRS archive publication. Please cite as:
 Bartczak, E. T.*, Bassier, M., Vergauwen, M. (2025). ORBIT: Optimized Routing for Bridge Inspection Toolkit. An open-source UAS flight path planning tool for comprehensive bridge inspections under realistic constraints. ISPRS Archives (UAV-g 2025, Aalto University, Espoo, Finland). DOI: TBA (forthcoming).
 
 
-#### Installation
+### Installation
 use the environment.yml file:
 cd to the main folder
 **conda env create -n Orbit -f orbit-environment.yml**
