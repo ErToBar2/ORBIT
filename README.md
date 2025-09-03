@@ -12,7 +12,7 @@ The generated waypoint files let a UAS automatically execute flight routes **aro
 - **Constraint-aware routing:** Specify vertical/horizontal offsets and flight speeds while maintaining manual control of the gimbal/camera.
 - **Safety / no-fly handling:** Define safety zones to avoid obstacles (e.g., trees, powerlines).
 - **Photogrammetry alignment robustness:** Inserts **vertical connections** between under-deck passes and overview routes to link imagery across routes for sufficient overlap and reliable camera alignment.
-- **GNSS-denied–aware planning:** Under-deck routes are designed to **reacquire GNSS after each pass**, accommodating temporary GNSS loss with short **IMU-only** segments.
+- **GNSS-denied–aware planning:** Underdeck inspection flight routes are designed to **reacquire GNSS after each pass**, accommodating temporary GNSS loss with short **IMU-only navigation** segments.
 - **Outputs for review & ops:** KMZ export optimized for **DJI Mavic 3E** workflows.
 - **GUI:** Windows GUI for interactive planning.
 
