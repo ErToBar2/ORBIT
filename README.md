@@ -25,7 +25,7 @@ Bartczak, E. T.*, Bassier, M., Vergauwen, M. (2025). ORBIT: Optimized Routing fo
 
 
 ### Installation
-use the environment.yml file:
+Use the environment.yml file:
 - cd to the main folder
 - **conda env create -n Orbit -f orbit-environment.yml**
 - In Anaconda prompt 3, the satellite map on tab 2 might not show just yet.
@@ -33,3 +33,45 @@ use the environment.yml file:
 - Now it should run as well from Anaconda. 
 
 Note that the QTWebengine can be problematic. For a windows machine, the yml should work fine. Pip can be problematic.
+
+
+### Usage instructions & known bugs:
+- Run the ORBTv.98c.py file
+- ** python ORBTv.98c.py**
+
+# Project Setup Tab
+- First selection of a template cross section might crash the program.
+- Since the cross section image is now in the import directory for that bridge name, it should work now.
+- You can not switch coordinate systems in one instance: If you chose a coordintae system and confirmed the project, you can not go back and load other data in a different coordinate system. Best is to resstart the app.
+- **Cross-section**: You can use any cross section image to extrude it over the bridge trajectory. Simply use e.g. a technical drawing and fill the cross section you want to extract with a blue fill. also, mark one (ideally longest) known distance as a green line. Specify that disntance in **input_scale_meters**. Make sure nothing else in the image has these colors. 
+  
+# Bridge Gemeometry Tab
+- In Anaconda prompt 3, the satellite map on tab 2 might not show just yet.
+- In that case, run the .py file in Visual Studio. Afterwards, it also works in Anaconda prompt.
+- **Trajectory**: mark the center line of the bridge, typically mark from abutment to abutment. This is the basis for all flight route calculations. If no height information was imported in the load bridge dialog, it will use the **trajectory_heights** (Tab1).
+- **Pillars**: mark the approx pillar positions (2 points for each pillar) - they devide the bridge into sections for the underdeck inspection flights. Abutments at the start and end of the trajectory dont need to be marked. 
+- **Safety Zones**: use the + button to finalize a safety zone before building the model
+  
+# Flightroute Generation
+#### Overview Flights
+- **order**: specify which "standard flight routes" are connected in which order. The first number is the side (1 = right, 2=left) and use the offsets from the trajectory as specified in **"standard_flight_routes"** and the corresponding flight speed of **"flight_speed_map"**. Use "r" to reverse a flight, e.g. "101", "r101" is going to go down the trajectory and coming back up to the starting point. 
+- **transition_mode**: Its recommended to use =2 so the transition from the right to the left side happens on the side where the pilot is standing (start of bridge trajectory on the right) Other options are 0 = separate right and left side and 1=pass middle which can be used to pass underneath the bridge.   transition_mode uses the transition_vertical_offset and transition_horizontal_offsets.
+
+#### Underdeck Flights
+- **num_points**: base points per section of the bridge. E.g. if you declare only one pillar (code assums abutments at start and end of trajectory) the bridge will be devided into two sections. For num_points = [3, 7, 3] the first section will have 3 base points and the second 7 base points. Add more points if you add more sections (pillars). The base points are corresponding to the number of passes under the bridge.
+- **horizontal_offsets_underdeck**: Horizontal distance from bridge (trajectory + bridge width/2). Corresponds to **num_points**, uses previous distance if not matching number of sections.
+- **height_offsets_underdeck**: corresponds to **num_points**. Vertical offset from the trajectory. Mind the thickness of the superstructure. Uses previous value if not matching number of sections.
+- **general_height_offset**: additional safety offset
+- **thresholds_zones**: safety offset from the pillar positions to avoid e.g. vegetatin around the pillars. 
+- **custom_zone_angles**: will be updated automatically (if empty) according to the angle between trajectory and pillars (in degrees).
+-  **connection_height**: vertical flight segments at start and end of each section. This should correspond to the height used in the overview flight to guarantee image overlap between flight routes for better photogrammetric alingment. These flight segements use the flight speed as specifiend in **flight_speed_map** under **connection**
+-  **num_passes**: defines how often the drone crosses though per base point. =2 is recommended so the UAS comes back and continues on the pilots side of the bridge with the next base point pair. 
+
+#### Export Modus
+- heightMode: EGM96 is recommended, because then the UAS will update its height when recapturing RTK signal. Needs **heightStartingPoint_Ellipsoid** otherwise defaults to **relativeToStartPoint**
+- **heightStartingPoint_Ellipsoid**: Can be read from the UAS controller in RTK settings or from EXIF data in image taken from the UAS sitting on the ground.
+- **heightStartingPoint_Reference**: If a geolocated point cloud is available for better flight planning. Typically, 3D flight routes are specified using 3D coordinates and loaded during Project Setup Tab from txt file. In that case, the bridge trajectory is not refering to the height above ground, e.g. in Abose sea level. Therefore, the altitude of the starting point in that system must be entered (will be substracted from the waypoints).
+
+#### Additional Features
+
+
