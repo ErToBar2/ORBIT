@@ -68,7 +68,7 @@ Note that the QTWebengine can be problematic. For a windows machine, the yml sho
 -  **num_passes**: defines how often the drone crosses though per base point. =2 is recommended so the UAS comes back and continues on the pilots side of the bridge with the next base point pair. 
 
 #### Export Modus
-- **heightMode**: EGM96 is recommended, because then the UAS will update its height when recapturing RTK signal. Needs **heightStartingPoint_Ellipsoid** otherwise defaults to **relativeToStartPoint**. Note that "EGM96" (named by DJi) actually refers to the ellipsoidal height
+- **heightMode**: EGM96 is recommended, because then the UAS will update its height when recapturing RTK signal. Needs **heightStartingPoint_Ellipsoid** otherwise defaults to **relativeToStartPoint**. Note that "EGM96" (named by DJi) actually refers to the ellipsoidal height. Check https://geographiclib.sourceforge.io/cgi-bin/GeoidEval and google maps for approximations.
 - **heightStartingPoint_Ellipsoid**: Can be read from the UAS controller in RTK settings or from EXIF data in image taken from the UAS sitting on the ground.
 - **heightStartingPoint_Reference**: If a geolocated point cloud is available for better flight planning. Typically, 3D flight routes are specified using 3D coordinates and loaded during Project Setup Tab from txt file. In that case, the bridge trajectory is not refering to the height above ground, e.g. in Abose sea level. Therefore, the altitude of the starting point in that system must be entered (will be substracted from the waypoints).
 
