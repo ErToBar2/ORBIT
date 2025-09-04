@@ -37,7 +37,7 @@ Note that the QTWebengine can be problematic. For a windows machine, the yml sho
 
 ## Usage Instructions:
 - Run the ORBTv.98c.py file
-- ** python ORBTv.98c.py**
+- **python ORBTv.98c.py**
 
 ### Project Setup Tab
 - First selection of a template cross section might crash the program.
@@ -52,7 +52,7 @@ Note that the QTWebengine can be problematic. For a windows machine, the yml sho
 - **Pillars**: mark the approx pillar positions (2 points for each pillar) - they devide the bridge into sections for the underdeck inspection flights. Abutments at the start and end of the trajectory dont need to be marked. 
 - **Safety Zones**: use the + button to finalize a safety zone before building the model
   
-### Flightroute Generation
+### Flightroute Generation Tab
 #### Overview Flights
 - **order**: specify which "standard flight routes" are connected in which order. The first number is the side (1 = right, 2=left) and use the offsets from the trajectory as specified in **"standard_flight_routes"** and the corresponding flight speed of **"flight_speed_map"**. Use "r" to reverse a flight, e.g. "101", "r101" is going to go down the trajectory and coming back up to the starting point. 
 - **transition_mode**: Its recommended to use =2 so the transition from the right to the left side happens on the side where the pilot is standing (start of bridge trajectory on the right) Other options are 0 = separate right and left side and 1=pass middle which can be used to pass underneath the bridge.   transition_mode uses the transition_vertical_offset and transition_horizontal_offsets.
