@@ -14,7 +14,7 @@ the bridge structure closely with multiple passes and proper pillar avoidance.
 """
 from __future__ import annotations
 
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, List, Any
 import numpy as np
 from .safety_enhanced import EnhancedSafetyProcessor
 
@@ -248,6 +248,39 @@ def _generate_underdeck_routes_complete_logic(trajectory_samples: List, params: 
     )
     debug_print(f"🎯 Computed base points with thresholds for {len(base_points)} spans")
 
+    # OPTIONAL OVERRIDE: if a span's custom angle is "00", build base points from
+    # pillar-parallel baselines rather than the trajectory normal.
+    override_spans = set()
+    try:
+        custom_angles_raw = params.get('custom_zone_angles', [])
+        override_spans = _spans_with_pillar_parallel_override(custom_angles_raw)
+        if override_spans:
+            debug_print(f"🟢 '00' override activated for spans: {sorted(list(override_spans))}")
+            pairs_sorted, centers_chain = _get_pillar_pairs_sorted_by_chain(app, np.asarray(trajectory_samples, dtype=float))
+            per_pair_angles: Dict[int, List[float]] = {}
+            per_pair_crossings: Dict[int, List[List[float]]] = {}
+            for span_idx in sorted(override_spans):
+                # Only inner spans are bounded by two pillars: 1..len(pairs_sorted)-1
+                if span_idx <= 0 or span_idx >= len(pairs_sorted):
+                    debug_print(f"   ⚠️ Span {span_idx+1}: cannot apply pillar-parallel override (missing bounding pillars)")
+                    continue
+                mids, angles_deg, crossings = _compute_pillar_parallel_pairs_and_midpoints_for_span(
+                    span_idx,
+                    pairs_sorted,
+                    np.asarray(trajectory_samples, dtype=float),
+                    params.get('num_points', []),
+                    params.get('thresholds_zones', [])
+                )
+                if mids:
+                    base_points[span_idx] = mids
+                    per_pair_angles[span_idx] = angles_deg
+                    per_pair_crossings[span_idx] = crossings
+            debug_print(f"🪄 Applied pillar-parallel base points override for spans: {sorted(list(override_spans))}")
+            # stash crossings for optional downstream use/debug
+            params['_pillar_parallel_crossings'] = per_pair_crossings
+    except Exception as e:
+        debug_print(f"⚠️ Pillar-parallel override not applied: {e}")
+
     # Normals along the path
     normals = _compute_normals_for_base_points(base_points)
     debug_print(f"📐 Computed normals for trajectory")
@@ -260,7 +293,32 @@ def _generate_underdeck_routes_complete_logic(trajectory_samples: List, params: 
 
     # FINAL angles: custom overrides pillar-derived default
     angles_zones = _resolve_span_angles(default_angles, params.get('custom_zone_angles', []))
+    # If we have per-pair angles for override spans, install them to override span-level angles
+    try:
+        if override_spans:
+            for s in override_spans:
+                if '_pillar_parallel_crossings' in params:
+                    # angles were kept alongside crossings length
+                    cross_list = params.get('_pillar_parallel_crossings', {}).get(s, [])
+                else:
+                    cross_list = []
+                # Retrieve computed per-pair angles from earlier block if present
+                # We re-compute here safely if not stashed
+                if isinstance(angles_zones, list):
+                    # retrieve angles computed earlier in override block
+                    # note: store angles in local map available in closure via per_pair_angles
+                    try:
+                        # mypy: best-effort; per_pair_angles may not exist if earlier block failed
+                        if 'per_pair_angles' in locals() and s in per_pair_angles:
+                            angles_zones[s] = per_pair_angles[s]
+                            debug_print(f"   🔁 Span {s+1}: replacing span-angle with {len(per_pair_angles[s])} per-pair angles")
+                    except Exception:
+                        pass
+    except Exception:
+        pass
     debug_print(f"🔄 Final angles for spans (deg): {angles_zones}")
+    if override_spans:
+        debug_print(f"ℹ️ Pillar-parallel spans {sorted(list(override_spans))} set angle to 0° – angles not used in offset computation for these spans.")
 
     # Offset points
     offset_points_underdeck = _compute_points_with_horizontal_offset(
@@ -268,6 +326,12 @@ def _generate_underdeck_routes_complete_logic(trajectory_samples: List, params: 
         adjusted_height_offsets, angles_zones
     )
     debug_print(f"🎯 Computed offset points for underdeck routes")
+    if override_spans:
+        # Log which horizontal offsets were applied to the override spans
+        h_off = params.get('horizontal_offsets_underdeck', [])
+        for s in sorted(list(override_spans)):
+            off_val = (h_off[s] if s < len(h_off) else (h_off[-1] if h_off else 0.0))
+            debug_print(f"   ↳ Span {s+1}: using horizontal_offset={off_val:.2f}m with angle=0° (pillar-parallel)")
 
     # Multi-pass crossing
     routes = _create_multipass_underdeck_routes(offset_points_underdeck, params)
@@ -373,6 +437,291 @@ def _compute_base_points_with_thresholds(trajectory: List, distances_pillars: Li
     return sections_base_points
 
 
+def _spans_with_pillar_parallel_override(custom_angles_raw) -> set:
+    """Return indices of spans that request pillar-parallel override via the sentinel '00'.
+
+    We intentionally require a string '00' (optionally with whitespace or a trailing degree sign)
+    to avoid colliding with numeric 0. Using numeric 0 continues to mean 0° relative
+    to the trajectory (legacy behavior).
+    """
+    spans: set = set()
+    if not isinstance(custom_angles_raw, (list, tuple)):
+        return spans
+    for i, val in enumerate(custom_angles_raw):
+        if isinstance(val, str):
+            s = val.strip().lower().replace('°', '')
+            if s == '00':
+                spans.add(i)
+    return spans
+
+
+def _get_pillar_pairs_sorted_by_chain(app, traj_np: np.ndarray):
+    """Return (pairs_sorted, centers_chain) for pillar edge pairs ordered along trajectory.
+
+    pairs_sorted: list of [[x1,y1], [x2,y2]] per pillar (two edge points per pillar)
+    centers_chain: list of chainage values (meters) of each pillar center along trajectory
+    """
+    # 1) Gather XY points for pillar edges in project coordinates
+    pillars_xy_flat: list = []
+    if app is not None and getattr(app, "pillars_project_xy", None):
+        pillars_xy_flat = [tuple(map(float, p)) for p in app.pillars_project_xy]
+    elif app is not None and getattr(app, "current_pillars", None):
+        def _proj(lat, lon):
+            try:
+                if getattr(app, "_last_transform_func", None):
+                    x, y, _ = app._last_transform_func(float(lat), float(lon), 0.0)
+                    return float(x), float(y)
+                if getattr(app, "current_context", None):
+                    x, y, _ = app.current_context.wgs84_to_project(float(lon), float(lat), 0.0)
+                    return float(x), float(y)
+            except Exception:
+                pass
+            return float(lon), float(lat)
+        for p in app.current_pillars:
+            lat = p.get("lat"); lon = p.get("lon")
+            if lat is None or lon is None:
+                continue
+            pillars_xy_flat.append(_proj(lat, lon))
+
+    if not pillars_xy_flat or len(pillars_xy_flat) < 2:
+        return [], []
+
+    # 2) Group into edge pairs per pillar: (0,1), (2,3), ...
+    pairs: list = []
+    i = 0
+    while i < len(pillars_xy_flat):
+        if i + 1 < len(pillars_xy_flat):
+            a = np.array(pillars_xy_flat[i], dtype=float)
+            b = np.array(pillars_xy_flat[i+1], dtype=float)
+            pairs.append([a, b])
+            debug_print(f"   🔗 Pillar pair {(i//2)+1}: A=({a[0]:.2f},{a[1]:.2f}) B=({b[0]:.2f},{b[1]:.2f})")
+            i += 2
+        else:
+            # odd leftover – duplicate
+            a = np.array(pillars_xy_flat[i], dtype=float)
+            pairs.append([a, a.copy()])
+            debug_print(f"   🔗 Pillar pair {(i//2)+1}: single point duplicated A=({a[0]:.2f},{a[1]:.2f})")
+            i += 1
+
+    # 3) Sort by chainage of pair centers along trajectory
+    def _project_point_to_chainage(pt_xy, traj_xy):
+        best_d = 1e30
+        best_s = 0.0
+        acc = 0.0
+        for j in range(1, traj_xy.shape[0]):
+            a = traj_xy[j-1]; b = traj_xy[j]
+            ab = b - a
+            L2 = float(np.dot(ab, ab))
+            if L2 <= 0:
+                continue
+            t = float(np.clip(np.dot(pt_xy - a, ab) / L2, 0.0, 1.0))
+            p = a + t * ab
+            d = float(np.linalg.norm(pt_xy - p))
+            if d < best_d:
+                best_d = d
+                best_s  = acc + t * float(np.linalg.norm(ab))
+            acc += float(np.linalg.norm(ab))
+        return best_s
+
+    traj_xy = traj_np[:, :2]
+    centers = [0.5 * (p[0] + p[1]) for p in pairs]
+    chains = [
+        _project_point_to_chainage(np.asarray(c, float), traj_xy)
+        for c in centers
+    ]
+    order = np.argsort(np.asarray(chains))
+    pairs_sorted = [pairs[int(k)] for k in order]
+    centers_chain = [float(chains[int(k)]) for k in order]
+    for idx, (pair, s) in enumerate(zip(pairs_sorted, centers_chain), start=1):
+        c = 0.5 * (pair[0] + pair[1])
+        debug_print(f"   📍 Pillar order {idx}: center=({c[0]:.2f},{c[1]:.2f}), chainage={s:.2f}m")
+    return pairs_sorted, centers_chain
+
+
+def _compute_pillar_parallel_base_points_for_span(span_idx: int,
+                                                  pairs_sorted: list,
+                                                  centers_chain: list,
+                                                  traj_np: np.ndarray,
+                                                  num_points: List[int],
+                                                  thresholds_zones: List[Tuple]) -> List[List[float]]:
+    """Generate base points along the straight midline between two neighboring pillars.
+
+    - Applies thresholds_zones[span_idx] as start/end buffers (in meters) from each pillar
+    - Distributes num_points[span_idx] uniformly along the effective midline segment
+    - Z at each base point is interpolated from the nearest trajectory segment
+    """
+    if span_idx <= 0 or span_idx >= len(pairs_sorted):
+        return []
+
+    # Build midline between pillar centers of bounding pillars
+    pA = pairs_sorted[span_idx - 1]
+    pB = pairs_sorted[span_idx]
+    c0 = 0.5 * (np.asarray(pA[0], float) + np.asarray(pA[1], float))
+    c1 = 0.5 * (np.asarray(pB[0], float) + np.asarray(pB[1], float))
+    seg = c1 - c0
+    L = float(np.linalg.norm(seg))
+    if L <= 1e-6:
+        return []
+
+    seg_dir = seg / L
+    debug_print(f"   🧮 Span {span_idx+1} pillar centers: C0=({c0[0]:.2f},{c0[1]:.2f}) C1=({c1[0]:.2f},{c1[1]:.2f}) length={L:.2f}m")
+
+    # Thresholds for this span
+    thr_start = thresholds_zones[span_idx][0] if span_idx < len(thresholds_zones) else 0.0
+    thr_end   = thresholds_zones[span_idx][1] if span_idx < len(thresholds_zones) else 0.0
+    eff_len = max(0.0, L - float(thr_start) - float(thr_end))
+    n = num_points[span_idx] if span_idx < len(num_points) else 0
+    if eff_len <= 0.0 or n <= 0:
+        return []
+
+    debug_print(f"   🚧 thresholds: start={thr_start:.2f}m end={thr_end:.2f}m → effective={eff_len:.2f}m, points={n}")
+
+    # Interpolate Z from nearest trajectory segment
+    traj = np.asarray(traj_np, float)
+    def _interp_z_near(xy: np.ndarray) -> float:
+        best_d = 1e30
+        best_z = float(traj[0][2]) if traj.shape[1] >= 3 else 0.0
+        for j in range(1, traj.shape[0]):
+            a = traj[j-1][:2]; b = traj[j][:2]
+            v = b - a
+            L2 = float(np.dot(v, v))
+            if L2 <= 0: 
+                continue
+            t = float(np.clip(np.dot(xy - a, v) / L2, 0.0, 1.0))
+            p = a + t * v
+            d = float(np.linalg.norm(xy - p))
+            if d < best_d:
+                best_d = d
+                # linear z along the same segment proportion t
+                za = float(traj[j-1][2]) if traj.shape[1] >= 3 else 0.0
+                zb = float(traj[j][2])   if traj.shape[1] >= 3 else 0.0
+                best_z = (1.0 - t) * za + t * zb
+        return best_z
+
+    # Compute sample positions along effective segment
+    if n == 1:
+        s_positions = [float(thr_start + 0.5 * eff_len)]
+    else:
+        interval = eff_len / float(n - 1)
+        s_positions = [float(thr_start + k * interval) for k in range(n)]
+
+    base_points: List[List[float]] = []
+    for s in s_positions:
+        xy = (c0 + s * seg_dir).tolist()
+        z = _interp_z_near(np.asarray(xy, float))
+        base_points.append([xy[0], xy[1], z])
+    debug_print(f"   📍 Created {len(base_points)} pillar-parallel base points for span {span_idx+1}")
+
+    return base_points
+
+
+def _compute_pillar_parallel_pairs_and_midpoints_for_span(span_idx: int,
+                                                          pairs_sorted: list,
+                                                          traj_np: np.ndarray,
+                                                          num_points: List[int],
+                                                          thresholds_zones: List[Tuple]) -> Tuple[List[List[float]], List[float], List[List[float]]]:
+    """Compute pillar-parallel right/left base lines, trimmed by thresholds, then build base point pairs.
+
+    Returns:
+      - midpoints (base points for this span)
+      - angles_deg per base pair: angle of the R→L segment vs deck-normal at crossing
+      - crossings per base pair: intersection points [x,y,z] onto trajectory polyline (Z from segment interpolation)
+    """
+    if span_idx <= 0 or span_idx >= len(pairs_sorted):
+        return [], [], []
+
+    # Right/Left points per pillar: assume index 0 is right, 1 is left
+    pA_r, pA_l = np.asarray(pairs_sorted[span_idx - 1][0], float), np.asarray(pairs_sorted[span_idx - 1][1], float)
+    pB_r, pB_l = np.asarray(pairs_sorted[span_idx][0], float),   np.asarray(pairs_sorted[span_idx][1], float)
+
+    # Build right and left baselines
+    v_r = pB_r - pA_r
+    v_l = pB_l - pA_l
+    Lr = float(np.linalg.norm(v_r)); Ll = float(np.linalg.norm(v_l))
+    if Lr <= 1e-6 or Ll <= 1e-6:
+        return [], [], []
+    er = v_r / Lr; el = v_l / Ll
+
+    # thresholds
+    thr_start = thresholds_zones[span_idx][0] if span_idx < len(thresholds_zones) else 0.0
+    thr_end   = thresholds_zones[span_idx][1] if span_idx < len(thresholds_zones) else 0.0
+    eff_r = max(0.0, Lr - thr_start - thr_end)
+    eff_l = max(0.0, Ll - thr_start - thr_end)
+    n = num_points[span_idx] if span_idx < len(num_points) else 0
+    if n <= 0 or eff_r <= 0.0 or eff_l <= 0.0:
+        return [], [], []
+
+    # sample positions (matched counts on both sides)
+    if n == 1:
+        s_r = [thr_start + 0.5 * eff_r]
+        s_l = [thr_start + 0.5 * eff_l]
+    else:
+        step_r = eff_r / float(n - 1)
+        step_l = eff_l / float(n - 1)
+        s_r = [thr_start + k * step_r for k in range(n)]
+        s_l = [thr_start + k * step_l for k in range(n)]
+
+    # helper: project onto trajectory and compute deck-normal + z
+    traj = np.asarray(traj_np, float)
+    traj_xy = traj[:, :2]
+    def _closest_segment_info(xy: np.ndarray) -> Tuple[int, float, np.ndarray, float]:
+        best_d = 1e30; best_seg = 0; best_t = 0.0; best_p = traj_xy[0]
+        acc = 0.0; s_at = 0.0
+        for j in range(1, traj_xy.shape[0]):
+            a = traj_xy[j-1]; b = traj_xy[j]
+            v = b - a
+            L2 = float(np.dot(v, v))
+            if L2 <= 0:
+                continue
+            t = float(np.clip(np.dot(xy - a, v) / L2, 0.0, 1.0))
+            p = a + t * v
+            d = float(np.linalg.norm(xy - p))
+            if d < best_d:
+                best_d = d; best_seg = j; best_t = t; best_p = p
+                s_at = acc + t * float(np.linalg.norm(v))
+            acc += float(np.linalg.norm(v))
+        return best_seg, best_t, best_p, s_at
+
+    def _z_interp(seg_idx: int, t: float) -> float:
+        za = float(traj[seg_idx-1][2]) if traj.shape[1] >= 3 else 0.0
+        zb = float(traj[seg_idx][2])   if traj.shape[1] >= 3 else 0.0
+        return (1.0 - t) * za + t * zb
+
+    midpoints: List[List[float]] = []
+    angles_deg: List[float] = []
+    crossings: List[List[float]] = []
+
+    for k in range(n):
+        pr = pA_r + s_r[k] * er
+        pl = pA_l + s_l[k] * el
+        mid = 0.5 * (pr + pl)
+
+        # crossing and angle vs deck-normal
+        seg_idx, t_seg, p_xy, _s = _closest_segment_info(mid)
+        z_cross = _z_interp(seg_idx, t_seg)
+        crossings.append([float(p_xy[0]), float(p_xy[1]), z_cross])
+
+        traj_dir = traj_xy[seg_idx] - traj_xy[seg_idx-1]
+        Ld = float(np.linalg.norm(traj_dir))
+        if Ld <= 0:
+            deck_n = np.array([1.0, 0.0])
+        else:
+            traj_t = traj_dir / Ld
+            deck_n = np.array([-traj_t[1], traj_t[0]])
+
+        rl = pl - pr
+        Lrl = float(np.linalg.norm(rl))
+        rl_u = rl / Lrl if Lrl > 1e-9 else np.array([1.0, 0.0])
+        dot = float(np.clip(np.dot(deck_n, rl_u), -1.0, 1.0))
+        cross_z = float(deck_n[0]*rl_u[1] - deck_n[1]*rl_u[0])
+        ang = float(np.degrees(np.arctan2(cross_z, dot)))
+
+        midpoints.append([float(mid[0]), float(mid[1]), z_cross])
+        angles_deg.append(ang)
+
+    debug_print(f"   📍 Created {len(midpoints)} pillar-parallel pairs (midpoints) for span {span_idx+1}")
+    return midpoints, angles_deg, crossings
+
 def _generate_span_angles_with_custom(num_spans: int, custom_angles: List, distances_pillars: List[float]) -> List[float]:
     """Generate angles for each span with custom_zone_angles support (like original)."""
     
@@ -437,8 +786,13 @@ def _adjust_height_offsets(height_offsets: List[List], num_points: List[int],
 
 def _compute_points_with_horizontal_offset(base_points: List[List], normals: List[np.ndarray],
                                           horizontal_offsets: List[float], height_offsets: List[List],
-                                          angles: List[float]) -> List[List]:
-    """Compute offset points; robust to per-span list length mismatches."""
+                                          angles: List[Any]) -> List[List]:
+    """Compute offset points; robust to per-span list length mismatches.
+
+    angles may be either:
+      - per-span float (legacy behavior)
+      - per-span List[float] with one angle per base point (pillar-parallel override)
+    """
     offset_points = []
     normal_idx = 0
 
@@ -452,15 +806,23 @@ def _compute_points_with_horizontal_offset(base_points: List[List], normals: Lis
                   else (horizontal_offsets[-1] if horizontal_offsets else 0.0))
         section_heights = (height_offsets[section_index] if section_index < len(height_offsets) and len(height_offsets[section_index]) > 0
                            else [0.0])
-        angle = angles[section_index] if section_index < len(angles) else 0.0
+        angle_spec = angles[section_index] if section_index < len(angles) else 0.0
 
         section_points = []
         for i, base_point in enumerate(points):
             normal = normals[normal_idx % len(normals)] if normals else np.array([1.0, 0.0, 0.0])
             h = section_heights[i % len(section_heights)]
 
-            pr = _calculate_adjusted_point(np.array(base_point),  offset, normal, h, angle)
-            pl = _calculate_adjusted_point(np.array(base_point), -offset, normal, h, angle)
+            # Resolve angle per base-point if a list is provided for this section
+            if isinstance(angle_spec, (list, tuple)) and len(angle_spec) > 0:
+                angle_here = float(angle_spec[i % len(angle_spec)])
+            elif isinstance(angle_spec, (int, float)):
+                angle_here = float(angle_spec)
+            else:
+                angle_here = 0.0
+
+            pr = _calculate_adjusted_point(np.array(base_point),  offset, normal, h, angle_here)
+            pl = _calculate_adjusted_point(np.array(base_point), -offset, normal, h, angle_here)
 
             section_points.append(pr.tolist())
             section_points.append(pl.tolist())
@@ -543,7 +905,7 @@ def _create_multipass_underdeck_routes(offset_points_underdeck: List[List], para
             for pass_num in range(passes_for_this_base):
                 pass_tag = f"underdeck_span{span_idx+1}_base{base_idx+1}_pass{pass_num+1}"
                 
-                if pass_num % 2 != 0:   # if pass_num % 2 == 0: is starting on left side.
+                if pass_num % 2 != 0:
                     # Even passes: Right → Left with vertical connections
                     # R1
                     route_points.append([right_point[0], right_point[1], right_point[2], pass_tag])
@@ -1343,13 +1705,33 @@ def _calculate_pillar_distances(trajectory_samples: List, num_spans: int, app=No
         debug_print(f"   ⚠️ Sections ({len(sections)}) ≠ configured spans ({num_spans}). Extra/missing spans will be skipped downstream.")
     return sections
 
-
-def _resolve_span_angles(default_angles: List[float], custom_angles: List[float]) -> List[float]:
-    if not default_angles:
-        return custom_angles[:]
-    out = []
+def _resolve_span_angles(default_angles: List[float], custom_angles: List) -> List[float]:
+    """
+    Resolve angles for each span.
+    Rules:
+      - If custom angle is string '00' → special pillar-parallel mode handles base points; angle here = 0.0
+      - If custom angle is string 'parallel' → use pillar-derived default
+      - If numeric custom angle → use it
+      - Else → use pillar-derived default
+    """
+    out: list[float] = []
     for i in range(len(default_angles)):
-        out.append(custom_angles[i] if custom_angles and i < len(custom_angles) else default_angles[i])
+        # Attempt to get custom angle for this span
+        ca = None
+        if custom_angles and i < len(custom_angles):
+            ca = custom_angles[i]
+        # If user requests pillar-parallel override '00', return 0 here
+        if isinstance(ca, str) and ca.strip().lower().replace('°','') == '00':
+            out.append(0.0)
+        # If user requests 'parallel', use pillar-derived default
+        if isinstance(ca, str) and ca.lower() == 'parallel':
+            out.append(default_angles[i])
+        # If numeric custom angle, use it
+        elif isinstance(ca, (int, float)):
+            out.append(float(ca))
+        # Otherwise, default to pillar-based angle
+        else:
+            out.append(default_angles[i])
     return out
 
 def _compute_girder_offsets(bridge_width: float, n_girders: int) -> List[float]:
