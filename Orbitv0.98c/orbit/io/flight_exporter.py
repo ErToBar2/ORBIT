@@ -804,51 +804,36 @@ class OrbitFlightExporter:
     
     def _remove_consecutive_duplicates(self, waypoints: List[List]) -> List[List]:
         """Remove consecutively following exactly identical waypoints.
-
+    
         Preserves vertical connection points that have same X,Y but different Z coordinates,
         as these are intentional flight path maneuvers.
         """
-
-
         if len(waypoints) <= 1:
             return waypoints
-
+    
         unique_waypoints = [waypoints[0]]  # Always keep the first waypoint
         removed_count = 0
-
+    
         for i in range(1, len(waypoints)):
             current = waypoints[i]
             previous = waypoints[i - 1]
-
-            # Check if points are exactly identical (all coordinates match)
+    
+            # If lat, lon, alt are all identical, treat as a duplicate and remove,
+            # regardless of differing tags.
             if (len(current) >= 3 and len(previous) >= 3 and
-                current[0] == previous[0] and  # lat
-                current[1] == previous[1] and  # lon
-                current[2] == previous[2]):    # alt
-                # Additional check: preserve points that are part of vertical connections
-                # Vertical connections have same X,Y but different Z, and are typically tagged as "connection"
-                current_tag = current[3] if len(current) >= 4 else ""
-                previous_tag = previous[3] if len(previous) >= 4 else ""
-
-                # If this is a true duplicate (same X,Y,Z AND same tag), remove it
-                # But if it's a vertical connection point, preserve it
-                if ("connection" in current_tag.lower() or
-                    "connection" in previous_tag.lower() or
-                    current_tag != previous_tag):
-                    # Preserve vertical connections and points with different tags
-                    unique_waypoints.append(current)
-                    continue
-
-                # This is a true duplicate, remove it
+                current[0] == previous[0] and
+                current[1] == previous[1] and
+                current[2] == previous[2]):
                 removed_count += 1
                 continue
-
+    
             unique_waypoints.append(current)
-
+    
         if removed_count > 0:
             debug_print(f"   ✅ Removed {removed_count} consecutive identical waypoints")
-
+    
         return unique_waypoints
+
     
     def _build_dji_wpml_kml(self, waypoints: List[List], route_name: str) -> ET.Element:
         """Build the complete KML structure with DJI WPML elements."""
