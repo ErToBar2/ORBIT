@@ -333,6 +333,29 @@ def _generate_underdeck_routes_complete_logic(trajectory_samples: List, params: 
             off_val = (h_off[s] if s < len(h_off) else (h_off[-1] if h_off else 0.0))
             debug_print(f"   ↳ Span {s+1}: using horizontal_offset={off_val:.2f}m with angle=0° (pillar-parallel)")
 
+        # Replace offset points for override spans so that each pair lies directly on the
+        # pillar baselines (right: P1.x1y1→P2.x1y1, left: P1.x2y2→P2.x2y2), divided by thresholds
+        # and num_points, and heights adjusted. No trajectory-based angles or normals.
+        try:
+            pairs_sorted, _centers_chain = _get_pillar_pairs_sorted_by_chain(app, np.asarray(trajectory_samples, dtype=float))
+            for s in sorted(list(override_spans)):
+                off_val = (h_off[s] if s < len(h_off) else (h_off[-1] if h_off else 0.0))
+                height_list = adjusted_height_offsets[s] if s < len(adjusted_height_offsets) else [0.0]
+                repl = _compute_pillar_parallel_offsets_for_span(
+                    s,
+                    pairs_sorted,
+                    np.asarray(trajectory_samples, dtype=float),
+                    params.get('num_points', []),
+                    params.get('thresholds_zones', []),
+                    off_val,
+                    height_list
+                )
+                if repl:
+                    offset_points_underdeck[s] = repl
+                    debug_print(f"   🔄 Span {s+1}: replaced with {len(repl)//2} pillar-parallel offset pairs from trajectory crossings @ ±{off_val:.2f}m")
+        except Exception as e:
+            debug_print(f"⚠️ Could not replace offset points for pillar-parallel spans: {e}")
+
     # Multi-pass crossing
     routes = _create_multipass_underdeck_routes(offset_points_underdeck, params)
 
@@ -721,6 +744,184 @@ def _compute_pillar_parallel_pairs_and_midpoints_for_span(span_idx: int,
 
     debug_print(f"   📍 Created {len(midpoints)} pillar-parallel pairs (midpoints) for span {span_idx+1}")
     return midpoints, angles_deg, crossings
+
+
+def _compute_pillar_parallel_offsets_for_span(span_idx: int,
+                                              pairs_sorted: list,
+                                              traj_np: np.ndarray,
+                                              num_points: List[int],
+                                              thresholds_zones: List[Tuple],
+                                              horizontal_offset: float,
+                                              height_offsets: List[float]) -> List[List[float]]:
+    """For a '00' span: place right/left points at a fixed perpendicular distance from the
+    trajectory at the crossing with the R–L line sampled along the pillar baselines.
+
+    - No angle usage; strictly normal to trajectory at crossing.
+    - thresholds_zones control earliest/latest sampling along both right and left baselines.
+    - height_offsets cycles per base pair.
+    Returns flat list [R1, L1, R2, L2, ...].
+    """
+    if span_idx <= 0 or span_idx >= len(pairs_sorted):
+        return []
+
+    # Build right/left baselines
+    pA_r, pA_l = np.asarray(pairs_sorted[span_idx - 1][0], float), np.asarray(pairs_sorted[span_idx - 1][1], float)
+    pB_r, pB_l = np.asarray(pairs_sorted[span_idx][0], float),   np.asarray(pairs_sorted[span_idx][1], float)
+    v_r = pB_r - pA_r
+    v_l = pB_l - pA_l
+    Lr = float(np.linalg.norm(v_r)); Ll = float(np.linalg.norm(v_l))
+    if Lr <= 1e-6 or Ll <= 1e-6:
+        return []
+    er = v_r / Lr; el = v_l / Ll
+
+    thr_start = thresholds_zones[span_idx][0] if span_idx < len(thresholds_zones) else 0.0
+    thr_end   = thresholds_zones[span_idx][1] if span_idx < len(thresholds_zones) else 0.0
+    eff_r = max(0.0, Lr - thr_start - thr_end)
+    eff_l = max(0.0, Ll - thr_start - thr_end)
+    n = num_points[span_idx] if span_idx < len(num_points) else 0
+    if n <= 0 or eff_r <= 0.0 or eff_l <= 0.0:
+        return []
+
+    if n == 1:
+        s_r = [thr_start + 0.5 * eff_r]
+        s_l = [thr_start + 0.5 * eff_l]
+    else:
+        step_r = eff_r / float(n - 1)
+        step_l = eff_l / float(n - 1)
+        s_r = [thr_start + k * step_r for k in range(n)]
+        s_l = [thr_start + k * step_l for k in range(n)]
+
+    traj = np.asarray(traj_np, float)
+    traj_xy = traj[:, :2]
+
+    def _closest_segment_and_normal(xy: np.ndarray) -> Tuple[int, float, np.ndarray]:
+        best_d = 1e30; best_seg = 1; best_t = 0.0
+        for j in range(1, traj_xy.shape[0]):
+            a = traj_xy[j-1]; b = traj_xy[j]
+            v = b - a
+            L2 = float(np.dot(v, v))
+            if L2 <= 0:
+                continue
+            t = float(np.clip(np.dot(xy - a, v) / L2, 0.0, 1.0))
+            p = a + t * v
+            d = float(np.linalg.norm(xy - p))
+            if d < best_d:
+                best_d = d; best_seg = j; best_t = t
+        a = traj_xy[best_seg-1]; b = traj_xy[best_seg]
+        v = b - a
+        L = float(np.linalg.norm(v))
+        if L <= 0:
+            nrm = np.array([1.0, 0.0])
+        else:
+            tdir = v / L
+            nrm = np.array([-tdir[1], tdir[0]])
+        return best_seg, best_t, nrm
+
+    def _z_interp(seg_idx: int, t: float) -> float:
+        za = float(traj[seg_idx-1][2]) if traj.shape[1] >= 3 else 0.0
+        zb = float(traj[seg_idx][2])   if traj.shape[1] >= 3 else 0.0
+        return (1.0 - t) * za + t * zb
+
+    out: List[List[float]] = []
+    for k in range(n):
+        pr = pA_r + s_r[k] * er
+        pl = pA_l + s_l[k] * el
+        mid = 0.5 * (pr + pl)
+
+        seg_idx, t_seg, nrm = _closest_segment_and_normal(mid)
+        a = traj_xy[seg_idx-1]; b = traj_xy[seg_idx]
+        p_xy = a + t_seg * (b - a)
+        zc = _z_interp(seg_idx, t_seg)
+
+        # Place right/left points at fixed perpendicular distance from crossing point
+        nrm_u = nrm / (np.linalg.norm(nrm) + 1e-12)
+        h = height_offsets[k % len(height_offsets)] if height_offsets else 0.0
+        right = [float(p_xy[0] + horizontal_offset * nrm_u[0]), float(p_xy[1] + horizontal_offset * nrm_u[1]), float(zc - h)]
+        left  = [float(p_xy[0] - horizontal_offset * nrm_u[0]), float(p_xy[1] - horizontal_offset * nrm_u[1]), float(zc - h)]
+        out.append(right)
+        out.append(left)
+
+    return out
+
+
+def _compute_pillar_baseline_points_for_span(span_idx: int,
+                                             pairs_sorted: list,
+                                             traj_np: np.ndarray,
+                                             num_points: List[int],
+                                             thresholds_zones: List[Tuple],
+                                             height_offsets: List[float]) -> List[List[float]]:
+    """Simplified '00' mode: generate points strictly on pillar baselines.
+
+    Right baseline:  P1.x1y1 → P2.x1y1
+    Left baseline:   P1.x2y2 → P2.x2y2
+
+    - Apply thresholds_zones as distances from start/end of each baseline
+    - Divide each baseline into num_points points
+    - Adjust heights according to provided height_offsets (cycled)
+
+    Returns flat list [R1, L1, R2, L2, ...] with Z lowered by height offset.
+    """
+    if span_idx <= 0 or span_idx >= len(pairs_sorted):
+        return []
+
+    pA_r, pA_l = np.asarray(pairs_sorted[span_idx - 1][0], float), np.asarray(pairs_sorted[span_idx - 1][1], float)
+    pB_r, pB_l = np.asarray(pairs_sorted[span_idx][0], float),   np.asarray(pairs_sorted[span_idx][1], float)
+    v_r = pB_r - pA_r
+    v_l = pB_l - pA_l
+    Lr = float(np.linalg.norm(v_r)); Ll = float(np.linalg.norm(v_l))
+    if Lr <= 1e-6 or Ll <= 1e-6:
+        return []
+    er = v_r / Lr; el = v_l / Ll
+
+    thr_start = thresholds_zones[span_idx][0] if span_idx < len(thresholds_zones) else 0.0
+    thr_end   = thresholds_zones[span_idx][1] if span_idx < len(thresholds_zones) else 0.0
+    eff_r = max(0.0, Lr - thr_start - thr_end)
+    eff_l = max(0.0, Ll - thr_start - thr_end)
+    n = num_points[span_idx] if span_idx < len(num_points) else 0
+    if n <= 0 or eff_r <= 0.0 or eff_l <= 0.0:
+        return []
+
+    if n == 1:
+        s_r = [thr_start + 0.5 * eff_r]
+        s_l = [thr_start + 0.5 * eff_l]
+    else:
+        step_r = eff_r / float(n - 1)
+        step_l = eff_l / float(n - 1)
+        s_r = [thr_start + k * step_r for k in range(n)]
+        s_l = [thr_start + k * step_l for k in range(n)]
+
+    # Determine Z along baselines by sampling nearest trajectory segment Z (to respect height frame),
+    # then subtract the configured height offsets.
+    traj = np.asarray(traj_np, float)
+    traj_xy = traj[:, :2]
+    def _near_z(xy: np.ndarray) -> float:
+        best_d = 1e30; best_seg = 1; best_t = 0.0
+        for j in range(1, traj_xy.shape[0]):
+            a = traj_xy[j-1]; b = traj_xy[j]
+            v = b - a
+            L2 = float(np.dot(v, v))
+            if L2 <= 0:
+                continue
+            t = float(np.clip(np.dot(xy - a, v) / L2, 0.0, 1.0))
+            p = a + t * v
+            d = float(np.linalg.norm(xy - p))
+            if d < best_d:
+                best_d = d; best_seg = j; best_t = t
+        za = float(traj[best_seg-1][2]) if traj.shape[1] >= 3 else 0.0
+        zb = float(traj[best_seg][2])   if traj.shape[1] >= 3 else 0.0
+        return (1.0 - best_t) * za + best_t * zb
+
+    out: List[List[float]] = []
+    for k in range(n):
+        pr_xy = pA_r + s_r[k] * er
+        pl_xy = pA_l + s_l[k] * el
+        z_r = _near_z(pr_xy)
+        z_l = _near_z(pl_xy)
+        h = height_offsets[k % len(height_offsets)] if height_offsets else 0.0
+        out.append([float(pr_xy[0]), float(pr_xy[1]), float(z_r - h)])
+        out.append([float(pl_xy[0]), float(pl_xy[1]), float(z_l - h)])
+
+    return out
 
 def _generate_span_angles_with_custom(num_spans: int, custom_angles: List, distances_pillars: List[float]) -> List[float]:
     """Generate angles for each span with custom_zone_angles support (like original)."""
