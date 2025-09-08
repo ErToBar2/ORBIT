@@ -543,7 +543,7 @@ def _create_multipass_underdeck_routes(offset_points_underdeck: List[List], para
             for pass_num in range(passes_for_this_base):
                 pass_tag = f"underdeck_span{span_idx+1}_base{base_idx+1}_pass{pass_num+1}"
                 
-                if pass_num % 2 == 0:
+                if pass_num % 2 != 0:   # if pass_num % 2 == 0: is starting on left side.
                     # Even passes: Right → Left with vertical connections
                     # R1
                     route_points.append([right_point[0], right_point[1], right_point[2], pass_tag])
