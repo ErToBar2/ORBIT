@@ -84,4 +84,8 @@ Note that the QTWebengine can be problematic. For a windows machine, the yml sho
 - **globalWaypointTurnMode** = toPointAndStopWithDiscontinuityCurvature is recommended. Drone stops at waypoint and updates position after pass through and stays close to the intended flight path around safety zones. For overview flights with a lot of waypoints, e.g. following a curved bridge, try # coordinateTurn or toPointAndPassWithContinuityCurvature to not stop at each point.
 
 
-
+## Known Bugs with DJI 
+- **Flight speed**: On the Mavic 3 E controller, the imported kmz flight route shows a flightspeed per waypoint of 15m/s if using a flight speed < 1 m/s. The KMZ file is correct and the drone follows those instructions, but does not display the flight speed correctly.
+- **Flight Altitude**: If an imported flgiht route is changed, e.g. deleting a waypoint, the entire flgiht route is hiddenly changed. Although not displayed anywhere, the flight route changes to a completely different altitude. Do not change the flight routes on the controller.
+- **Waypoint overlay**: In a test with a Mavic 4, the waypoint overlay from tthe live video feed were projected in a wrong height. While the drone was able to execute the planned flight perfectly, the waypoints were projected below the water surface...
+- 
