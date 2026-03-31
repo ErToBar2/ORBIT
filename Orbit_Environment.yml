@@ -1,0 +1,38 @@
+name: Orbit
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+
+  # Core numerics / data
+  - numpy
+  - pandas
+  - scipy
+  - openpyxl
+  - tqdm
+
+  # Geometry / CRS
+  - shapely
+  - pyproj
+
+  # Parsing / XML
+  - lxml
+
+  # Visualization / UI
+  - matplotlib
+  - pyvista
+  - pyvistaqt
+  - qtpy
+  - pyside6>=6.7
+  - vtk
+
+  # Image processing
+  - opencv
+
+  # Utility scripts (orbit/tools)
+  - requests
+
+  # Keep pip section for any future wheel-only deps
+  - pip:
+      - pyyaml

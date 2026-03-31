@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interactive Bridge Map (Embedded CSV)</title>
+
+  <!-- Leaflet 1.9.4 with correct SRI -->
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+
+  <style>
+    html, body, #map { height: 100%; margin: 0; }
+    * { box-sizing: border-box; }
+    .control-panel {
+      position: absolute; top: 10px; left: 10px; z-index: 1000;
+      background: rgba(255,255,255,.97); padding: 12px; border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.15); max-width: 360px;
+      font: 14px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      transform: translateX(0); transition: transform 200ms ease;
+    }
+    .control-panel.collapsed { transform: translateX(calc(-100% + 28px)); }
+    .panel-toggle { position: absolute; top: 8px; right: -12px; width: 28px; height: 28px;
+      border-radius: 50%; border: 1px solid #cbd5e1; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.18);
+      display: grid; place-items: center; cursor: pointer; font-size: 16px; line-height: 1; }
+    .row { margin-bottom: 8px; }
+    .row label { display: block; font-weight: 600; margin-bottom: 4px; }
+    .row input[type="text"], .row input[type="number"], .row select {
+      width: 100%; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .chips { display: inline-flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .chip { padding: 2px 8px; border-radius: 999px; background: #f3f4f6; border: 1px solid #e5e7eb; font-size: 12px;
+      display: inline-flex; gap: 6px; align-items: center; }
+    .chip .x { border: none; background: transparent; cursor: pointer; font-weight: 700; }
+    .btn { appearance: none; border: 1px solid #ccc; background: #f9fafb; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+    .btn:hover { background: #f3f4f6; }
+    .btn.primary { background: #2563eb; color: #fff; border-color: #1d4ed8; }
+    .btn.primary:hover { background: #1d4ed8; }
+    .divider { height: 1px; background: #e5e7eb; margin: 8px 0; }
+    .legend { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,.2); }
+    .dot.red { background: #d53e4f; } .dot.orange { background: #fdae61; } .dot.green { background: #66bd63; } .dot.gray { background: #9ca3af; }
+    #debugBanner { position: absolute; top: 10px; right: 10px; z-index: 1001; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;
+      border-radius: 6px; padding: 6px 10px; font: 13px/1.3 system-ui; display: none; }
+    @media (max-width: 520px) { .control-panel { max-width: 86vw; } }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="debugBanner">No markers parsed — check your Google Maps URLs.</div>
+
+  <div class="control-panel collapsed" id="panel">
+    <button class="panel-toggle" id="panelToggle" title="Collapse/Expand" aria-label="Collapse filters">«</button>
+
+    <h3>Bridges</h3>
+    <div class="row">
+      <label for="searchName">Search by name</label>
+      <input id="searchName" list="nameList" type="text" placeholder="Type a bridge name…" />
+      <datalist id="nameList"></datalist>
+      <div style="margin-top:6px;"><button class="btn" id="btnZoomTo">Zoom to</button></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <label>Tag filters</label>
+      <div class="grid-2">
+        <div>
+          <small>Not feasible</small>
+          <select id="filterNotFeasible">
+            <option value="any">Any</option>
+            <option value="only">Only</option>
+            <option value="except">Exclude</option>
+          </select>
+        </div>
+        <div>
+          <small>Inspected</small>
+          <select id="filterInspected">
+            <option value="any">Any</option>
+            <option value="only">Only</option>
+            <option value="except">Exclude</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" id="customTagFiltersSection" style="display:none;">
+      <label>Custom tags</label>
+      <div id="customTagFilters" class="grid-2"></div>
+    </div>
+
+    <div class="row">
+      <label>Condition</label>
+      <div id="conditionList" style="max-height:120px; overflow:auto;"></div>
+    </div>
+
+    <div class="row">
+      <label>Length (m) range</label>
+      <div class="grid-2">
+        <input id="minLen" type="number" step="0.1" placeholder="min" />
+        <input id="maxLen" type="number" step="0.1" placeholder="max" />
+      </div>
+    </div>
+
+    <div class="row">
+      <label>Width (m) range</label>
+      <div class="grid-2">
+        <input id="minWid" type="number" step="0.1" placeholder="min" />
+        <input id="maxWid" type="number" step="0.1" placeholder="max" />
+      </div>
+    </div>
+
+    <div>
+      <button class="btn primary" id="btnApply">Apply filter</button>
+      <button class="btn" id="btnReset">Reset</button>
+      <button class="btn" id="btnFit">Fit to visible</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="legend">
+      <span><small>Findings on concrete:</small></span>
+      <span class="dot red"></span><small>100+</small>
+      <span class="dot orange"></span><small>30–99</small>
+      <span class="dot green"></span><small>1–29</small>
+      <span class="dot gray"></span><small>0/NA</small>
+    </div>
+
+    <div style="margin-top:8px;">
+      <button class="btn" id="btnExportAll">Download updated CSV (all)</button>
+      <button class="btn" id="btnExportVisible">Download visible as CSV</button>
+      <button class="btn" id="btnClearTags">Clear local tags</button>
+    </div>
+    <div id="counter" style="margin-top:6px; font-size:12px;"></div>
+  </div>
+
+  <!-- Embedded CSV as JSON -->
+  <script id="bridge-data" type="application/json">[{"Bridge name": "Drongenbrug Wegbrug W4", "Condition": "toestand 5: zeer slecht", "Length (m)": "149.6", "Width (m)": "33.7", "Findings on concrete": "95", "Google maps url": "https://www.google.com/maps/@51.0532189311,3.6724882443,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Goedingebrug / brug 12 over de Leie", "Condition": "toestand 5: zeer slecht", "Length (m)": "105.7", "Width (m)": "25.5", "Findings on concrete": "51", "Google maps url": "https://www.google.com/maps/@51.0322724592,3.6454131625,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Maaltebrug Wegbrug W7", "Condition": "toestand 5: zeer slecht", "Length (m)": "104", "Width (m)": "20.24", "Findings on concrete": "67", "Google maps url": "https://www.google.com/maps/@51.0238426744,3.7037980217,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug 5 Arendonk", "Condition": "toestand 5: zeer slecht", "Length (m)": "86.9", "Width (m)": "12", "Findings on concrete": "35", "Google maps url": "https://www.google.com/maps/@51.3389695493,5.1047200579,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Langebrug Nieuwpoort", "Condition": "toestand 5: zeer slecht", "Length (m)": "80", "Width (m)": "29.6", "Findings on concrete": "14", "Google maps url": "https://www.google.com/maps/@51.1349256824,2.7548332293,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Meierijbrug + Sint-Lievensviaduct naar Gent Centrum", "Condition": "toestand 4: slecht", "Length (m)": "2390", "Width (m)": "20.3", "Findings on concrete": "488", "Google maps url": "https://www.google.com/maps/@51.0349834328,3.738697867,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Viaduct van Halle RV13/Viaduct A7", "Condition": "toestand 4: slecht", "Length (m)": "407.59", "Width (m)": "19.4", "Findings on concrete": "9", "Google maps url": "https://www.google.com/maps/@50.72557533,4.2285946407,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Vlaams-Brabant"}, {"Bridge name": "Oprit O1 + O2 naar het viaduct over de Oude- en de Nieuwe Leie", "Condition": "toestand 4: slecht", "Length (m)": "291.96", "Width (m)": "13", "Findings on concrete": "240", "Google maps url": "https://www.google.com/maps/@50.840548437,3.2836423773,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Keizerviaduct Visserijkomviaduct", "Condition": "toestand 4: slecht", "Length (m)": "285", "Width (m)": "15.1", "Findings on concrete": "62", "Google maps url": "https://www.google.com/maps/@51.0425697795,3.7402641948,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Moscouviaduct Scheldeviaduct 78/O in A14/E17", "Condition": "toestand 4: slecht", "Length (m)": "282", "Width (m)": "60", "Findings on concrete": "555", "Google maps url": "https://www.google.com/maps/@51.0294817193,3.7454147804,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Afrit A1+A2 van het viaduct over de Oude en De Nieuwe Leie", "Condition": "toestand 4: slecht", "Length (m)": "271.97", "Width (m)": "12.6", "Findings on concrete": "269", "Google maps url": "https://www.google.com/maps/@50.8403025942,3.2833072742,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Brug in 403 Leievallei", "Condition": "toestand 4: slecht", "Length (m)": "245", "Width (m)": "34.8", "Findings on concrete": "168", "Google maps url": "https://www.google.com/maps/@50.8070604252,3.208701837,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Brug O41", "Condition": "toestand 4: slecht", "Length (m)": "236", "Width (m)": "77.5", "Findings on concrete": "", "Google maps url": "https://www.google.com/maps/@51.074547147,4.4440928981,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Brug 4 Mol Gompel", "Condition": "toestand 4: slecht", "Length (m)": "222", "Width (m)": "14.5", "Findings on concrete": "111", "Google maps url": "https://www.google.com/maps/@51.1935704058,5.156041825,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Prof. Vandepittebrug wegbrug W12 Ter Handbrug", "Condition": "toestand 4: slecht", "Length (m)": "192", "Width (m)": "21.16", "Findings on concrete": "28", "Google maps url": "https://www.google.com/maps/@51.0077142737,3.751446327,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Stasegembrug 10 in Tak 1 over Kanaal Bossuit-Kortrijk", "Condition": "toestand 4: slecht", "Length (m)": "156", "Width (m)": "13.4", "Findings on concrete": "112", "Google maps url": "https://www.google.com/maps/@50.828901431,3.2948982713,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Brug Veldwezelt", "Condition": "toestand 4: slecht", "Length (m)": "146", "Width (m)": "18.9", "Findings on concrete": "76", "Google maps url": "https://www.google.com/maps/@50.8596017734,5.638583447,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Smalspoorbrug", "Condition": "toestand 4: slecht", "Length (m)": "139", "Width (m)": "4.3", "Findings on concrete": "51", "Google maps url": "https://www.google.com/maps/@50.7925578447,3.3707624727,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Leieviaduct S1 (met op- en afritten)", "Condition": "toestand 4: slecht", "Length (m)": "138.11", "Width (m)": "19", "Findings on concrete": "290", "Google maps url": "https://www.google.com/maps/@50.8404210214,3.283474929,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Grenadiersbrug Scheldebrug Semmerzake-Eke", "Condition": "toestand 4: slecht", "Length (m)": "134", "Width (m)": "18.3", "Findings on concrete": "30", "Google maps url": "https://www.google.com/maps/@50.9552283653,3.6536314527,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug Postzegellaan", "Condition": "toestand 4: slecht", "Length (m)": "130.5", "Width (m)": "24", "Findings on concrete": "70", "Google maps url": "https://www.google.com/maps/@51.015990944,4.480379837,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Katelijnepoortbrug Brugge R30", "Condition": "toestand 4: slecht", "Length (m)": "126.5", "Width (m)": "24.8", "Findings on concrete": "145", "Google maps url": "https://www.google.com/maps/@51.1975655272,3.227998954,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Ringbrug Ingelmunster", "Condition": "toestand 4: slecht", "Length (m)": "118.8", "Width (m)": "26", "Findings on concrete": "71", "Google maps url": "https://www.google.com/maps/@50.9146522158,3.2706242048,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Zwijnaardekanaalbrug 15 In E40 over Scheldekanaal", "Condition": "toestand 4: slecht", "Length (m)": "118", "Width (m)": "51", "Findings on concrete": "106", "Google maps url": "https://www.google.com/maps/@51.0089151441,3.733832985,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Zultebrug", "Condition": "toestand 4: slecht", "Length (m)": "117", "Width (m)": "14", "Findings on concrete": "68", "Google maps url": "https://www.google.com/maps/@50.929382607,3.4378013875,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "John Kennedybrug in Kennedylaan over Moervaart", "Condition": "toestand 4: slecht", "Length (m)": "114.54", "Width (m)": "33.4", "Findings on concrete": "111", "Google maps url": "https://www.google.com/maps/@51.1364474756,3.7921676997,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Brug 3 Mol Rauw Simonse Brug", "Condition": "toestand 4: slecht", "Length (m)": "110.76", "Width (m)": "24.7", "Findings on concrete": "103", "Google maps url": "https://www.google.com/maps/@51.2055172271,5.158661935,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Scheldebrug O12 in R4", "Condition": "toestand 4: slecht", "Length (m)": "110.5", "Width (m)": "37.48", "Findings on concrete": "188", "Google maps url": "https://www.google.com/maps/@51.0130441897,3.7939415763,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Ooiebrug", "Condition": "toestand 4: slecht", "Length (m)": "110", "Width (m)": "26.8", "Findings on concrete": "75", "Google maps url": "https://www.google.com/maps/@51.0312532427,4.0768051543,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Buchtenbrug Ringvaartbrug W6", "Condition": "toestand 4: slecht", "Length (m)": "106", "Width (m)": "10.14", "Findings on concrete": "48", "Google maps url": "https://www.google.com/maps/@51.0339871099,3.6872588486,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug 37F", "Condition": "toestand 4: slecht", "Length (m)": "101.42", "Width (m)": "21.1", "Findings on concrete": "48", "Google maps url": "https://www.google.com/maps/@51.0398947909,4.4441221808,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Zwaantjesbrug", "Condition": "toestand 4: slecht", "Length (m)": "101.2", "Width (m)": "14", "Findings on concrete": "62", "Google maps url": "https://www.google.com/maps/@50.9069807127,3.3255753279,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Wegbrug Kleine Ring", "Condition": "toestand 4: slecht", "Length (m)": "101.04", "Width (m)": "14.96", "Findings on concrete": "9", "Google maps url": "https://www.google.com/maps/@50.8390877367,3.6035178586,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug over afleidingskanaal Leie in Balgerhoeke", "Condition": "toestand 4: slecht", "Length (m)": "101", "Width (m)": "14.9", "Findings on concrete": "96", "Google maps url": "https://www.google.com/maps/@51.2014016965,3.5168816378,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Brug 7 Olmen Dorp", "Condition": "toestand 4: slecht", "Length (m)": "100", "Width (m)": "13", "Findings on concrete": "152", "Google maps url": "https://www.google.com/maps/@51.1386386057,5.1437555137,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Brug 2 Stevensvennen", "Condition": "toestand 4: slecht", "Length (m)": "100", "Width (m)": "24.16", "Findings on concrete": "61", "Google maps url": "https://www.google.com/maps/@51.2249815922,5.2326734908,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Limburg"}, {"Bridge name": "Wiezebrug Aalst", "Condition": "toestand 4: slecht", "Length (m)": "100", "Width (m)": "18.9", "Findings on concrete": "42", "Google maps url": "https://www.google.com/maps/@50.9816873824,4.0662335598,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Heerweg-Noord Zwijnaarde", "Condition": "toestand 4: slecht", "Length (m)": "100", "Width (m)": "15.2", "Findings on concrete": "33", "Google maps url": "https://www.google.com/maps/@51.0138309483,3.7203709136,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug aan La Flandre over sluis Zwevegem", "Condition": "toestand 4: slecht", "Length (m)": "99", "Width (m)": "14.6", "Findings on concrete": "17", "Google maps url": "https://www.google.com/maps/@50.8163792608,3.3525889712,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug O36 1", "Condition": "toestand 4: slecht", "Length (m)": "95", "Width (m)": "32", "Findings on concrete": "81", "Google maps url": "https://www.google.com/maps/@51.0408503044,4.4533345543,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Brug over Vaart Duinkerke-Veurne", "Condition": "toestand 4: slecht", "Length (m)": "94.6", "Width (m)": "20.5", "Findings on concrete": "72", "Google maps url": "https://www.google.com/maps/@51.0707697498,2.6556653854,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Brug B37A", "Condition": "toestand 4: slecht", "Length (m)": "94.32", "Width (m)": "32.5", "Findings on concrete": "73", "Google maps url": "https://www.google.com/maps/@51.042972826,4.4517699425,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Vaste Wegbrug Schendelbeke", "Condition": "toestand 4: slecht", "Length (m)": "92", "Width (m)": "14.8", "Findings on concrete": "14", "Google maps url": "https://www.google.com/maps/@50.7933556448,3.9011974783,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Zwijnaardekasteelbrug / Wegbrug W19 Scheldekanaal", "Condition": "toestand 4: slecht", "Length (m)": "90.4", "Width (m)": "18.7", "Findings on concrete": "23", "Google maps url": "https://www.google.com/maps/@51.001806756,3.7243125777,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Speybrug Wegbrug W2", "Condition": "toestand 4: slecht", "Length (m)": "89.2", "Width (m)": "9.26", "Findings on concrete": "31", "Google maps url": "https://www.google.com/maps/@51.0854095517,3.6589073166,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Emblembrug Netekanaal", "Condition": "toestand 4: slecht", "Length (m)": "75", "Width (m)": "13.4", "Findings on concrete": "58", "Google maps url": "https://www.google.com/maps/@51.1596869774,4.6070178707,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Centraal: Arn Bormans", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Centraal"}, {"Bridge name": "Brug O25 over Lovaart", "Condition": "toestand 4: slecht", "Length (m)": "69.54", "Width (m)": "28.4", "Findings on concrete": "101", "Google maps url": "https://www.google.com/maps/@51.0582809655,2.6755830835,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Baanbrug Duffel over Nete", "Condition": "toestand 4: slecht", "Length (m)": "61.5", "Width (m)": "12.5", "Findings on concrete": "", "Google maps url": "https://www.google.com/maps/@51.0941841259,4.5072181453,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Brug O18 over Kleine Nete in E313 (ex E39)", "Condition": "toestand 4: slecht", "Length (m)": "51.32", "Width (m)": "32", "Findings on concrete": "64", "Google maps url": "https://www.google.com/maps/@51.1793224046,4.7202651137,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Viaduct Wold16 in A2", "Condition": "toestand 3: matig", "Length (m)": "983", "Width (m)": "33.287", "Findings on concrete": "41", "Google maps url": "https://www.google.com/maps/@50.903166472,4.7058962207,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Vlaams-Brabant"}, {"Bridge name": "Viaduct Merksem Prefabdelen Schijnpoort Verbinding", "Condition": "toestand 3: matig", "Length (m)": "583", "Width (m)": "40.5", "Findings on concrete": "", "Google maps url": "https://www.google.com/maps/@51.2320135668,4.438050293,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Viaduct Diestse Vest(RLVD) in R23  (Lüdenscheidsingel)", "Condition": "toestand 3: matig", "Length (m)": "520", "Width (m)": "23.6", "Findings on concrete": "26", "Google maps url": "https://www.google.com/maps/@50.8877030407,4.7064245329,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Vlaams-Brabant"}, {"Bridge name": "Brug 6bis over gepland Kanaal Oelegem Zandvliet", "Condition": "toestand 3: matig", "Length (m)": "266.5", "Width (m)": "43.75", "Findings on concrete": "111", "Google maps url": "https://www.google.com/maps/@51.2087564313,4.6153255714,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Vlassenbroekbrug", "Condition": "toestand 3: matig", "Length (m)": "252.6", "Width (m)": "31", "Findings on concrete": "", "Google maps url": "https://www.google.com/maps/@51.0408701316,4.1236124397,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Toegangsviaduct naar Hefbrug", "Condition": "toestand 3: matig", "Length (m)": "243.32", "Width (m)": "21", "Findings on concrete": "148", "Google maps url": "https://www.google.com/maps/@50.92542163406869,4.420140385901403,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Vlaams-Brabant"}, {"Bridge name": "Dendermondebrug Scheldebrug N47 Dendermonde", "Condition": "toestand 3: matig", "Length (m)": "230", "Width (m)": "25.4", "Findings on concrete": "171", "Google maps url": "https://www.google.com/maps/@51.0351792405,4.106491485,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Centraal: Arn Bormans", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Centraal"}, {"Bridge name": "Brug Lanaken over Kanaal Briegden-Neerharen", "Condition": "toestand 3: matig", "Length (m)": "179", "Width (m)": "16", "Findings on concrete": "44", "Google maps url": "https://www.google.com/maps/@50.8892298533,5.6621279252,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Limburg"}, {"Bridge name": "Brug Gellik Kompveld", "Condition": "toestand 3: matig", "Length (m)": "172", "Width (m)": "12.7", "Findings on concrete": "33", "Google maps url": "https://www.google.com/maps/@50.8781301765,5.6093270407,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Spoorwegbrug (S3) over de Ringvaart", "Condition": "toestand 3: matig", "Length (m)": "164.6", "Width (m)": "10.5", "Findings on concrete": "26", "Google maps url": "https://www.google.com/maps/@51.0065309823,3.7766100749,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Centraal: Arn Bormans", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Centraal"}, {"Bridge name": "Stasegembrug 11 in R8 over Kanaal Bossuit-Kortrijk", "Condition": "toestand 3: matig", "Length (m)": "157.3", "Width (m)": "30.4", "Findings on concrete": "278", "Google maps url": "https://www.google.com/maps/@50.8290904718,3.2939428579,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Brug over vertakking Albertkanaal-Hasselt", "Condition": "toestand 3: matig", "Length (m)": "154", "Width (m)": "30.72", "Findings on concrete": "65", "Google maps url": "https://www.google.com/maps/@50.9419539407,5.3347168128,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Limburg"}, {"Bridge name": "Brug 3de Jagers te voet in Zingem Scheldebrug", "Condition": "toestand 3: matig", "Length (m)": "154", "Width (m)": "20.4", "Findings on concrete": "14", "Google maps url": "https://www.google.com/maps/@50.8933020707,3.6798746593,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Ohiobrug", "Condition": "toestand 3: matig", "Length (m)": "153.6", "Width (m)": "20.1", "Findings on concrete": "8", "Google maps url": "https://www.google.com/maps/@50.8705026398,3.6279687912,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "IJzerbrug O14", "Condition": "toestand 3: matig", "Length (m)": "152", "Width (m)": "40.4", "Findings on concrete": "36", "Google maps url": "https://www.google.com/maps/@51.1289853089,2.8003754864,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Brug in Berchem", "Condition": "toestand 3: matig", "Length (m)": "150.91", "Width (m)": "22.2", "Findings on concrete": "29", "Google maps url": "https://www.google.com/maps/@50.7939909632,3.5048044872,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Leiebrug Kortrijk in R8", "Condition": "toestand 3: matig", "Length (m)": "148.77", "Width (m)": "29.4", "Findings on concrete": "160", "Google maps url": "https://www.google.com/maps/@50.8161615185,3.2319081934,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Ringvaartbrug DIRV", "Condition": "toestand 3: matig", "Length (m)": "147", "Width (m)": "27.1", "Findings on concrete": "29", "Google maps url": "https://www.google.com/maps/@51.0323817734,3.6957361452,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Bellembrug", "Condition": "toestand 3: matig", "Length (m)": "144", "Width (m)": "17.6", "Findings on concrete": "10", "Google maps url": "https://www.google.com/maps/@51.0982055852,3.494775757,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Durmenbrug", "Condition": "toestand 3: matig", "Length (m)": "141.6", "Width (m)": "17.6", "Findings on concrete": "74", "Google maps url": "https://www.google.com/maps/@51.0947431395,3.5733560426,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug O36 3", "Condition": "toestand 3: matig", "Length (m)": "138", "Width (m)": "19.38", "Findings on concrete": "73", "Google maps url": "https://www.google.com/maps/@51.0417317988,4.4525376832,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Bierstalbrug", "Condition": "toestand 3: matig", "Length (m)": "130.76", "Width (m)": "18.6", "Findings on concrete": "94", "Google maps url": "https://www.google.com/maps/@51.09211240451555,3.6374758916918193,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Lovendegembrug", "Condition": "toestand 3: matig", "Length (m)": "130.76", "Width (m)": "18.8", "Findings on concrete": "56", "Google maps url": "https://www.google.com/maps/@51.0909700913,3.6036388632,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Louisabrug Beernembrug", "Condition": "toestand 3: matig", "Length (m)": "127.1", "Width (m)": "17.6", "Findings on concrete": "12", "Google maps url": "https://www.google.com/maps/@51.139356386,3.3291342746,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Zeltebrug (Nieuwe Pelikaanbrug)", "Condition": "toestand 3: matig", "Length (m)": "126.34", "Width (m)": "26.8", "Findings on concrete": "72", "Google maps url": "https://www.google.com/maps/@51.1205550777,2.7460721312,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Nevelebrug in omgelegde N437", "Condition": "toestand 3: matig", "Length (m)": "126", "Width (m)": "20", "Findings on concrete": "32", "Google maps url": "https://www.google.com/maps/@51.0357059248,3.553086082,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Merendreebrug", "Condition": "toestand 3: matig", "Length (m)": "124", "Width (m)": "20.8", "Findings on concrete": "79", "Google maps url": "https://www.google.com/maps/@51.0735118998,3.5696072888,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Schaapsbrug", "Condition": "toestand 3: matig", "Length (m)": "124", "Width (m)": "13.2", "Findings on concrete": "50", "Google maps url": "https://www.google.com/maps/@50.9413451611,3.1615693789,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug in de Koestraat over De Leie Balokkenbrug", "Condition": "toestand 3: matig", "Length (m)": "124", "Width (m)": "13.2", "Findings on concrete": "26", "Google maps url": "https://www.google.com/maps/@50.773890253,3.0241939758,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug O2", "Condition": "toestand 3: matig", "Length (m)": "121", "Width (m)": "64", "Findings on concrete": "131", "Google maps url": "https://www.google.com/maps/@51.2358440219,5.4085554422,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Limburg"}, {"Bridge name": "Brug van Mylle   Kanaal Brugge-Oostende", "Condition": "toestand 3: matig", "Length (m)": "121", "Width (m)": "37.75", "Findings on concrete": "112", "Google maps url": "https://www.google.com/maps/@51.2173429809,3.1886530361,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Waggelwaterbrug", "Condition": "toestand 3: matig", "Length (m)": "121", "Width (m)": "16.8", "Findings on concrete": "106", "Google maps url": "https://www.google.com/maps/@51.2172494259,3.2009654013,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Krommebrug voor plaatselijk verkeer", "Condition": "toestand 3: matig", "Length (m)": "121", "Width (m)": "14", "Findings on concrete": "26", "Google maps url": "https://www.google.com/maps/@50.9892700211,3.524381306,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Beekstraatbrug W3", "Condition": "toestand 3: matig", "Length (m)": "120.64", "Width (m)": "13.56", "Findings on concrete": "63", "Google maps url": "https://www.google.com/maps/@51.0713070649,3.6576942973,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug LE11 in wegomleiding Menen-Halluin", "Condition": "toestand 3: matig", "Length (m)": "120", "Width (m)": "33.7", "Findings on concrete": "56", "Google maps url": "https://www.google.com/maps/@50.794509224,3.1373037185,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Schipdonkbrug in de gemeenteweg Leikanttragel", "Condition": "toestand 3: matig", "Length (m)": "120", "Width (m)": "17.6", "Findings on concrete": "22", "Google maps url": "https://www.google.com/maps/@51.09170585585317,3.563916154351263,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Landegembrug", "Condition": "toestand 3: matig", "Length (m)": "120", "Width (m)": "13.6", "Findings on concrete": "8", "Google maps url": "https://www.google.com/maps/@51.0570897279,3.5685039102,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Gaverebrug in N439  Scheldebrug Gavere", "Condition": "toestand 3: matig", "Length (m)": "118.6", "Width (m)": "18.7", "Findings on concrete": "23", "Google maps url": "https://www.google.com/maps/@50.929816115,3.653890362,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Machelenbrug", "Condition": "toestand 3: matig", "Length (m)": "117", "Width (m)": "13.8", "Findings on concrete": "46", "Google maps url": "https://www.google.com/maps/@50.9646952497256,3.478803951990743,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug Bree", "Condition": "toestand 3: matig", "Length (m)": "114.72", "Width (m)": "31.7", "Findings on concrete": "52", "Google maps url": "https://www.google.com/maps/@51.141335776,5.6216094257,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Limburg"}, {"Bridge name": "Brug over Kanaal Van Beverlo", "Condition": "toestand 3: matig", "Length (m)": "114.4", "Width (m)": "31.45", "Findings on concrete": "34", "Google maps url": "https://www.google.com/maps/@51.2125090303,5.2370076791,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Limburg"}, {"Bridge name": "Hutsepotbrug wegbrug W9", "Condition": "toestand 3: matig", "Length (m)": "113", "Width (m)": "17.14", "Findings on concrete": "127", "Google maps url": "https://www.google.com/maps/@51.0168868252,3.7089417133,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug Maasmechelen aan Dokter Haubenlaan", "Condition": "toestand 3: matig", "Length (m)": "112.46", "Width (m)": "13", "Findings on concrete": "50", "Google maps url": "https://www.google.com/maps/@50.9590821286,5.7091256075,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Limburg"}, {"Bridge name": "Scheldebrug", "Condition": "toestand 3: matig", "Length (m)": "112", "Width (m)": "32", "Findings on concrete": "79", "Google maps url": "https://www.google.com/maps/@50.8369886832,3.598724957,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Lotharingenbrug", "Condition": "toestand 3: matig", "Length (m)": "110", "Width (m)": "12", "Findings on concrete": "27", "Google maps url": "https://www.google.com/maps/@50.8585225461,3.6256718325,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Sint Denijsbrug Moen", "Condition": "toestand 3: matig", "Length (m)": "110", "Width (m)": "13.6", "Findings on concrete": "16", "Google maps url": "https://www.google.com/maps/@50.7658942729,3.3966884766,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Industriebrug", "Condition": "toestand 3: matig", "Length (m)": "109.72", "Width (m)": "33", "Findings on concrete": "26", "Google maps url": "https://www.google.com/maps/@51.104873792,3.7202945127,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Wantebrug", "Condition": "toestand 3: matig", "Length (m)": "109", "Width (m)": "13.7", "Findings on concrete": "77", "Google maps url": "https://www.google.com/maps/@50.9129377258,3.2834915544,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Destelbergenbrug 81/O Scheldebrug in E17(ex E3)", "Condition": "toestand 3: matig", "Length (m)": "109", "Width (m)": "47.5", "Findings on concrete": "8", "Google maps url": "https://www.google.com/maps/@51.0441026145,3.7921916834,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Brugsevaartbrug in R4 over Kanaal Gent-Oostende", "Condition": "toestand 3: matig", "Length (m)": "108", "Width (m)": "32", "Findings on concrete": "64", "Google maps url": "https://www.google.com/maps/@51.0844903833,3.6645302224,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Brug 10 Kwaadmechelen Veldhoven", "Condition": "toestand 3: matig", "Length (m)": "108", "Width (m)": "13", "Findings on concrete": "48", "Google maps url": "https://www.google.com/maps/@51.0992240313,5.1364057289,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Brug Geel Ten Aart", "Condition": "toestand 3: matig", "Length (m)": "108", "Width (m)": "16.5", "Findings on concrete": "42", "Google maps url": "https://www.google.com/maps/@51.2012974757,4.982374177,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Brug O30 Zuid Willemsvaart", "Condition": "toestand 3: matig", "Length (m)": "107.77", "Width (m)": "39", "Findings on concrete": "80", "Google maps url": "https://www.google.com/maps/@50.9521498624,5.7099521906,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Limburg"}, {"Bridge name": "Brug Mol Donk", "Condition": "toestand 3: matig", "Length (m)": "105.2", "Width (m)": "20.4", "Findings on concrete": "88", "Google maps url": "https://www.google.com/maps/@51.2253683733,5.115250624,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Kappebrug (W20) Zwijnaardsesteenweg", "Condition": "toestand 3: matig", "Length (m)": "104.28", "Width (m)": "18.7", "Findings on concrete": "12", "Google maps url": "https://www.google.com/maps/@51.0015491526,3.726524372,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Centraal: Arn Bormans", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Centraal"}, {"Bridge name": "Waalbrug W17 in N456 over Ringvaart om Gent", "Condition": "toestand 3: matig", "Length (m)": "104", "Width (m)": "19", "Findings on concrete": "64", "Google maps url": "https://www.google.com/maps/@51.1041195268,3.710695818,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Eversteinbrug W18", "Condition": "toestand 3: matig", "Length (m)": "104", "Width (m)": "12.76", "Findings on concrete": "23", "Google maps url": "https://www.google.com/maps/@51.102083387364914,3.7306548835611153,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug Rotem", "Condition": "toestand 3: matig", "Length (m)": "102", "Width (m)": "13", "Findings on concrete": "130", "Google maps url": "https://www.google.com/maps/@51.0576089782,5.7004513648,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Beneluxbrug / Brug Van Stasegem", "Condition": "toestand 3: matig", "Length (m)": "102", "Width (m)": "14.6", "Findings on concrete": "80", "Google maps url": "https://www.google.com/maps/@50.8278387877,3.3235682125,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Vaste brug in Spiere", "Condition": "toestand 3: matig", "Length (m)": "101.2", "Width (m)": "14.8", "Findings on concrete": "27", "Google maps url": "https://www.google.com/maps/@50.7161010134,3.3559672039,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug O33", "Condition": "toestand 3: matig", "Length (m)": "100.88", "Width (m)": "81.75", "Findings on concrete": "245", "Google maps url": "https://www.google.com/maps/@51.0359087626,4.4499467103,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Hogebrug in Sint-Eloois Vijve", "Condition": "toestand 3: matig", "Length (m)": "100.4", "Width (m)": "15", "Findings on concrete": "57", "Google maps url": "https://www.google.com/maps/@50.9089882502,3.4037521001,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug Sint-Huibrechts Lille I", "Condition": "toestand 3: matig", "Length (m)": "100", "Width (m)": "13", "Findings on concrete": "133", "Google maps url": "https://www.google.com/maps/@51.2147190555,5.5246630816,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Brug Lommel II", "Condition": "toestand 3: matig", "Length (m)": "100", "Width (m)": "13", "Findings on concrete": "129", "Google maps url": "https://www.google.com/maps/@51.2481676071486,5.33614376241216,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Brug Herentals Gerheze", "Condition": "toestand 3: matig", "Length (m)": "100", "Width (m)": "13", "Findings on concrete": "98", "Google maps url": "https://www.google.com/maps/@51.1802862368,4.8669298019,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Brug Dilsen aan Europalaan", "Condition": "toestand 3: matig", "Length (m)": "100", "Width (m)": "13", "Findings on concrete": "90", "Google maps url": "https://www.google.com/maps/@51.0386819125,5.7046183745,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Limburg"}, {"Bridge name": "Brug 8 Olmen Gervoort", "Condition": "toestand 3: matig", "Length (m)": "100", "Width (m)": "13", "Findings on concrete": "73", "Google maps url": "https://www.google.com/maps/@51.1284328094,5.1414860701,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Brug Neerpelt II", "Condition": "toestand 3: matig", "Length (m)": "100", "Width (m)": "13", "Findings on concrete": "69", "Google maps url": "https://www.google.com/maps/@51.23429059217423,5.428724289414193,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Brug Neerharen", "Condition": "toestand 3: matig", "Length (m)": "100", "Width (m)": "13", "Findings on concrete": "48", "Google maps url": "https://www.google.com/maps/@50.9099763911,5.6931321468,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Brug Olen Sint-Jozef", "Condition": "toestand 3: matig", "Length (m)": "100", "Width (m)": "7.8", "Findings on concrete": "45", "Google maps url": "https://www.google.com/maps/@51.1868972601,4.9029301159,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Brug 5 Balen Neet", "Condition": "toestand 3: matig", "Length (m)": "100", "Width (m)": "13.36", "Findings on concrete": "35", "Google maps url": "https://www.google.com/maps/@51.1729082404,5.1514460984,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Brug 15 Ingang Kanaal", "Condition": "toestand 3: matig", "Length (m)": "100", "Width (m)": "14", "Findings on concrete": "35", "Google maps url": "https://www.google.com/maps/@51.2392674314,4.500706536,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Brug 9 Kwaadmechelen Gerhoeven", "Condition": "toestand 3: matig", "Length (m)": "100", "Width (m)": "13", "Findings on concrete": "21", "Google maps url": "https://www.google.com/maps/@51.1088642888,5.1372067841,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "E17 Durmebrug O19", "Condition": "toestand 3: matig", "Length (m)": "97.89", "Width (m)": "40", "Findings on concrete": "124", "Google maps url": "https://www.google.com/maps/@51.094934595,4.034026411,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "St.-Martinusbrug over de Leie bochtafsnijding", "Condition": "toestand 3: matig", "Length (m)": "88", "Width (m)": "33.4", "Findings on concrete": "94", "Google maps url": "https://www.google.com/maps/@50.9784415541,3.5249607028,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Nieuwescheldebrug /wegbrug W11 langs de Ringvaart", "Condition": "toestand 3: matig", "Length (m)": "86", "Width (m)": "33", "Findings on concrete": "39", "Google maps url": "https://www.google.com/maps/@51.0120516381,3.7387067566,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Brug over KRL Izegem", "Condition": "toestand 3: matig", "Length (m)": "86", "Width (m)": "23", "Findings on concrete": "34", "Google maps url": "https://www.google.com/maps/@50.9227584771,3.2158571991,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Brug 17 Kanaal Dessel Schoten", "Condition": "toestand 3: matig", "Length (m)": "84", "Width (m)": "41", "Findings on concrete": "154", "Google maps url": "https://www.google.com/maps/@51.3004685212,5.1419069902,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Antwerpen"}, {"Bridge name": "Knokkebrug", "Condition": "toestand 3: matig", "Length (m)": "82.6", "Width (m)": "18.5", "Findings on concrete": "30", "Google maps url": "https://www.google.com/maps/@50.79854641628463,3.3661998930896297,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Aalterbrug (oud Gedeelte) rijrichting Aalter Maldegem", "Condition": "toestand 3: matig", "Length (m)": "75.6", "Width (m)": "16.6", "Findings on concrete": "19", "Google maps url": "https://www.google.com/maps/@51.107105511,3.4349640149,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Brug Obis", "Condition": "toestand 3: matig", "Length (m)": "74.28", "Width (m)": "10.8", "Findings on concrete": "49", "Google maps url": "https://www.google.com/maps/@51.241196413,5.162346034,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Oost: Gert Schreurs", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Oost"}, {"Bridge name": "Winketbrug over Dijle", "Condition": "toestand 3: matig", "Length (m)": "70", "Width (m)": "23.8", "Findings on concrete": "16", "Google maps url": "https://www.google.com/maps/@51.030124852883034,4.47138764059118,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Centraal: Arn Bormans", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Centraal"}, {"Bridge name": "Kalsijdebrug Snaaskerkebrug", "Condition": "toestand 3: matig", "Length (m)": "68.3", "Width (m)": "15", "Findings on concrete": "116", "Google maps url": "https://www.google.com/maps/@51.1743856319,2.9133092083,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Brug over Lovaart", "Condition": "toestand 3: matig", "Length (m)": "67.17", "Width (m)": "18", "Findings on concrete": "96", "Google maps url": "https://www.google.com/maps/@51.06081370100864,2.6726906196741274,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Brug Deerlijkstraat Sluis Zwevegem", "Condition": "toestand 3: matig", "Length (m)": "67.08", "Width (m)": "15", "Findings on concrete": "35", "Google maps url": "https://www.google.com/maps/@50.8236078749,3.3443566631,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Kuurnebrug", "Condition": "toestand 3: matig", "Length (m)": "64.2", "Width (m)": "14.6", "Findings on concrete": "18", "Google maps url": "https://www.google.com/maps/@50.8506081018,3.3002254557,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Voet- en fietsbrug", "Condition": "toestand 3: matig", "Length (m)": "64", "Width (m)": "3.2", "Findings on concrete": "15", "Google maps url": "https://www.google.com/maps/@50.84679014712197,3.614209476220025,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Sint Lievenspoortbrug Sint Lievensbrug", "Condition": "toestand 3: matig", "Length (m)": "58", "Width (m)": "42.2", "Findings on concrete": "72", "Google maps url": "https://www.google.com/maps/@51.0382631359,3.736757464,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer Oost-Vlaanderen"}, {"Bridge name": "Koning Albertbrug", "Condition": "toestand 3: matig", "Length (m)": "55.65", "Width (m)": "26", "Findings on concrete": "54", "Google maps url": "https://www.google.com/maps/@51.0429044804,3.7109851786,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Uniebrug", "Condition": "toestand 3: matig", "Length (m)": "51", "Width (m)": "14.3", "Findings on concrete": "129", "Google maps url": "https://www.google.com/maps/@51.126979833547,2.8018490989347,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Schoorbakkebrug", "Condition": "toestand 3: matig", "Length (m)": "51", "Width (m)": "11.3", "Findings on concrete": "79", "Google maps url": "https://www.google.com/maps/@51.0991199205,2.8223103164,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Wulpenbrug", "Condition": "toestand 3: matig", "Length (m)": "51", "Width (m)": "26.2", "Findings on concrete": "77", "Google maps url": "https://www.google.com/maps/@51.10269311705774,2.691438033455751,250m", "Beheerder contact": "Agentschap Wegen en verkeer: Thomas Plumet", "Beheerder Vlaamse overheid": "Agentschap Wegen en Verkeer - Afdeling Wegen en Verkeer West-Vlaanderen"}, {"Bridge name": "Jozef Guislainbrug", "Condition": "toestand 3: matig", "Length (m)": "50.69", "Width (m)": "18", "Findings on concrete": "9", "Google maps url": "https://www.google.com/maps/@51.0660766417,3.6994034624,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Heffenbrug", "Condition": "toestand 3: matig", "Length (m)": "50", "Width (m)": "13.5", "Findings on concrete": "33", "Google maps url": "https://www.google.com/maps/@51.0454801341,4.422057324,250m", "Beheerder contact": "De Vlaamse Waterweg - regio Centraal: Arn Bormans", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio Centraal"}, {"Bridge name": "Brug voor plaatselijk verkeer Socolbrug", "Condition": "toestand 3: matig", "Length (m)": "47", "Width (m)": "7.7", "Findings on concrete": "7", "Google maps url": "https://www.google.com/maps/@50.9136761544,3.428655899,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}, {"Bridge name": "Voetbrug aan Tijsluis", "Condition": "toestand 3: matig", "Length (m)": "", "Width (m)": "", "Findings on concrete": "25", "Google maps url": "https://www.google.com/maps/@51.0433595553,4.0833603013,250m", "Beheerder contact": "De Vlaamse Waterweg - regio West: Lieve De Porre", "Beheerder Vlaamse overheid": "De Vlaamse Waterweg nv - Afdeling Regio West"}]</script>
+
+  <script>
+    const STORAGE_KEY = "bridgeTags_v4"; // schema version
+    const PANEL_KEY = "panelCollapsed_v1";
+
+    // Map setup
+    const map = L.map("map", { preferCanvas: true }).setView([50.85, 4.35], 8);
+    // Base layers (match flight_map.html behavior, maxZoom 30)
+    const osmLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 30,
+      attribution: "&copy; OpenStreetMap contributors"
+    });
+    const satelliteLayer = L.tileLayer("https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
+      maxZoom: 30,
+      subdomains: ["mt0", "mt1", "mt2", "mt3"],
+      attribution: "Imagery © Google"
+    });
+    // Default to OSM to mimic existing simple map default
+    osmLayer.addTo(map);
+    // Layer control toggle
+    L.control.layers({
+      "OpenStreetMap": osmLayer,
+      "Satellite": satelliteLayer
+    }).addTo(map);
+    const markerLayer = L.layerGroup().addTo(map);
+
+    // Data & state
+    let rows = JSON.parse(document.getElementById("bridge-data").textContent);
+    let items = [];
+    let tagState = loadTags();
+    let unsavedChanges = false;
+    let lastVisibleRows = [];
+
+    // Collapsible panel
+    const panel = document.getElementById("panel");
+    const panelToggle = document.getElementById("panelToggle");
+    function setCollapsed(c) {
+      panel.classList.toggle("collapsed", !!c);
+      panelToggle.textContent = c ? "»" : "«";
+      panelToggle.setAttribute("aria-label", c ? "Expand filters" : "Collapse filters");
+      try { localStorage.setItem(PANEL_KEY, c ? "1" : "0"); } catch(e) {}
+    }
+    panelToggle.addEventListener("click", () => setCollapsed(!panel.classList.contains("collapsed")));
+    try {
+      const savedPanelState = localStorage.getItem(PANEL_KEY);
+      setCollapsed(savedPanelState === null ? true : savedPanelState === "1");
+    } catch(e) {
+      setCollapsed(true);
+    }
+
+    // Persistence
+    function loadTags() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch(e) { return {}; } }
+    function saveTags() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(tagState)); } catch(e) {} }
+
+    // Helpers
+    function parseNumber(v) {
+      if (v === null || v === undefined) return NaN;
+      const s = String(v).trim().replace(",", ".");
+      const n = parseFloat(s);
+      return Number.isFinite(n) ? n : NaN;
+    }
+    // ✅ Safe regex literals + fallback
+    function parseLatLonFromGoogle(url) {
+      if (!url) return null;
+      try {
+        let m = url.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+        if (m) return [parseFloat(m[1]), parseFloat(m[2])];
+        m = url.match(/[?&](?:q|ll)=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+        if (m) return [parseFloat(m[1]), parseFloat(m[2])];
+        m = url.match(/\/place\/(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+        if (m) return [parseFloat(m[1]), parseFloat(m[2])];
+        const nums = (url.match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
+        for (let i = 0; i + 1 < nums.length; i++) {
+          const a = nums[i], b = nums[i + 1];
+          if (Math.abs(a) <= 90 && Math.abs(b) <= 180) return [a, b];
+        }
+      } catch (e) {}
+      return null;
+    }
+    function colorForFindings(n) {
+      if (!Number.isFinite(n) || n <= 0) return "#9ca3af";
+      if (n >= 100) return "#d53e4f";
+      if (n >= 30)  return "#fdae61";
+      return "#66bd63";
+    }
+    function uniqueKey(row) {
+      return (row["Bridge name"] || "") + "||" + (row["Google maps url"] || "");
+    }
+    function escapeHTML(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+      }[c]));
+    }
+    function sanitizeId(s) { return String(s).replace(/[^A-Za-z0-9_-]/g, "_"); }
+
+    // Popup UI
+    function buildPopupHTML(item, idx) {
+      const r = item.row;
+      const findings = (r["Findings on concrete"] ?? "").toString();
+      const len = r["Length (m)"] ?? "—";
+      const wid = r["Width (m)"] ?? "—";
+      const cond = r["Condition"] ?? "—";
+      const url = r["Google maps url"] || "#";
+
+      const key = uniqueKey(r);
+      const ts = tagState[key] || { notFeasible:false, inspected:false, custom: [] };
+      const idNF = `notfeasible_${idx}`;
+      const idIns = `inspected_${idx}`;
+      const idCTWrap = `customWrap_${idx}`;
+      const idCTInput = `customInput_${idx}`;
+      const idCTAdd = `customAdd_${idx}`;
+
+      return `
+        <div style="min-width:270px">
+          <div style="font-weight:700; margin-bottom:4px;">${escapeHTML(r["Bridge name"] || "—")}</div>
+          <div>Condition: ${escapeHTML(cond)}</div>
+          <div>Length (m): ${escapeHTML(String(len))}</div>
+          <div>Width (m): ${escapeHTML(String(wid))}</div>
+          <div>Findings on concrete: ${escapeHTML(findings)}</div>
+          <div style="margin-top:4px;">
+            <a href="${url}" target="_blank" rel="noopener">Open in Google Maps</a>
+          </div>
+
+          <div style="margin:8px 0 4px 0; font-weight:600;">Tags</div>
+          <div class="chips" style="margin-bottom:6px;">
+            <label class="chip">
+              <input type="checkbox" id="${idNF}" ${ts.notFeasible ? "checked" : ""}/> Not feasible
+            </label>
+            <label class="chip">
+              <input type="checkbox" id="${idIns}" ${ts.inspected ? "checked" : ""}/> Inspected
+            </label>
+          </div>
+
+          <div class="row" style="margin-top:6px;">
+            <label style="font-weight:600; margin-bottom:4px;">Custom tags</label>
+            <div id="${idCTWrap}" class="chips" style="margin-bottom:6px;"></div>
+            <div class="grid-2">
+              <input id="${idCTInput}" type="text" placeholder="Add a tag…" />
+              <button class="btn" id="${idCTAdd}">Add</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCustomChips(container, key) {
+      container.innerHTML = "";
+      const tags = (tagState[key] && Array.isArray(tagState[key].custom)) ? tagState[key].custom : [];
+      tags.forEach(t => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        const label = document.createElement("span"); label.textContent = t;
+        const btn = document.createElement("button"); btn.className = "x"; btn.textContent = "×"; btn.title = "Remove";
+        btn.addEventListener("click", () => {
+          const arr = tagState[key].custom || [];
+          tagState[key].custom = arr.filter(x => x !== t);
+          saveTags(); unsavedChanges = true; renderCustomChips(container, key);
+          rebuildCustomTagFilters(); applyFilters();
+        });
+        chip.appendChild(label); chip.appendChild(btn);
+        container.appendChild(chip);
+      });
+    }
+    function addCustomTag(key, tag, container, inputEl) {
+      const val = (tag || "").trim();
+      if (!val) return;
+      tagState[key] = tagState[key] || { notFeasible:false, inspected:false, custom: [] };
+      const arr = tagState[key].custom || [];
+      if (!arr.includes(val)) arr.push(val);
+      tagState[key].custom = arr;
+      saveTags(); unsavedChanges = true; renderCustomChips(container, key);
+      if (inputEl) { inputEl.value = ""; inputEl.focus(); }
+      rebuildCustomTagFilters(); applyFilters();
+    }
+
+    function wirePopupEvents(idx, item) {
+      const key = uniqueKey(item.row);
+      tagState[key] = tagState[key] || { notFeasible:false, inspected:false, custom: [] };
+
+      const nf = document.getElementById(`notfeasible_${idx}`);
+      const ins = document.getElementById(`inspected_${idx}`);
+      if (nf) nf.addEventListener("change", (e) => { tagState[key].notFeasible = !!e.target.checked; saveTags(); unsavedChanges = true; applyFilters(); });
+      if (ins) ins.addEventListener("change", (e) => { tagState[key].inspected   = !!e.target.checked; saveTags(); unsavedChanges = true; applyFilters(); });
+
+      const wrap = document.getElementById(`customWrap_${idx}`);
+      const inp  = document.getElementById(`customInput_${idx}`);
+      const add  = document.getElementById(`customAdd_${idx}`);
+      if (wrap) renderCustomChips(wrap, key);
+      if (add) add.addEventListener("click", () => addCustomTag(key, inp && inp.value, wrap, inp));
+      if (inp) inp.addEventListener("keydown", (e) => { if (e.key === "Enter") addCustomTag(key, inp.value, wrap, inp); });
+    }
+
+    // Build markers
+    function buildMarkers() {
+      markerLayer.clearLayers();
+      let ok = 0, fail = 0;
+      items.forEach((item, idx) => {
+        if (!Array.isArray(item.latlon)) { fail++; return; }
+        const marker = L.circleMarker(item.latlon, {
+          radius: 7, fillColor: colorForFindings(item.findingsNum), color: "#333", weight: 2, opacity: 1, fillOpacity: 0.8
+        });
+        marker.bindPopup(() => buildPopupHTML(item, idx));
+        marker.on("popupopen", () => wirePopupEvents(idx, item));
+        item.marker = marker; ok++;
+      });
+      if (ok === 0) document.getElementById("debugBanner").style.display = "block";
+      applyFilters();
+    }
+
+    // Filters
+    function populateFilters() {
+      const dl = document.getElementById("nameList"); dl.innerHTML = "";
+      rows.forEach(r => { if (r["Bridge name"]) { const o = document.createElement("option"); o.value = r["Bridge name"]; dl.appendChild(o); } });
+
+      const conds = Array.from(new Set(rows.map(r => r["Condition"]).filter(Boolean))).sort();
+      const condList = document.getElementById("conditionList"); condList.innerHTML = "";
+      conds.forEach((c, i) => {
+        const id = "cond_" + i;
+        const lab = document.createElement("label");
+        lab.innerHTML = `<input type="checkbox" id="${id}" data-cond="${escapeHTML(c)}" checked /> ${escapeHTML(c)}`;
+        condList.appendChild(lab);
+      });
+
+      const lens = rows.map(r => parseNumber(r["Length (m)"])).filter(Number.isFinite);
+      const wids = rows.map(r => parseNumber(r["Width (m)"])).filter(Number.isFinite);
+      document.getElementById("minLen").value = lens.length ? Math.min(...lens).toFixed(2) : "";
+      document.getElementById("maxLen").value = lens.length ? Math.max(...lens).toFixed(2) : "";
+      document.getElementById("minWid").value = wids.length ? Math.min(...wids).toFixed(2) : "";
+      document.getElementById("maxWid").value = wids.length ? Math.max(...wids).toFixed(2) : "";
+
+      const auto = () => applyFilters();
+      document.getElementById("filterNotFeasible").addEventListener("change", auto);
+      document.getElementById("filterInspected").addEventListener("change", auto);
+      condList.addEventListener("change", auto);
+      ["minLen","maxLen","minWid","maxWid"].forEach(id => {
+        const el = document.getElementById(id);
+        el.addEventListener("input", auto); el.addEventListener("change", auto);
+      });
+
+      rebuildCustomTagFilters();
+    }
+
+    function activeConditions() {
+      return new Set(Array.from(document.querySelectorAll("#conditionList input[type=checkbox]"))
+        .filter(b => b.checked).map(b => b.getAttribute("data-cond")));
+    }
+
+    // Custom tag filter UI
+    function allCustomTags() {
+      const s = new Set();
+      Object.values(tagState).forEach(v => (v && Array.isArray(v.custom)) && v.custom.forEach(t => s.add(String(t))));
+      return Array.from(s).sort((a,b) => a.localeCompare(b, undefined, {sensitivity:"base"}));
+    }
+    function rebuildCustomTagFilters() {
+      const tags = allCustomTags();
+      const section = document.getElementById("customTagFiltersSection");
+      const wrap = document.getElementById("customTagFilters");
+      wrap.innerHTML = "";
+      if (!tags.length) { section.style.display = "none"; return; }
+      section.style.display = "";
+      tags.forEach(t => {
+        const id = "ctf_" + sanitizeId(t);
+        const box = document.createElement("div");
+        box.innerHTML = `
+          <div><small>${escapeHTML(t)}</small>
+            <select id="${id}">
+              <option value="any">Any</option>
+              <option value="only">Only</option>
+              <option value="except">Exclude</option>
+            </select>
+          </div>`;
+        wrap.appendChild(box);
+      });
+      wrap.querySelectorAll("select").forEach(sel => sel.addEventListener("change", applyFilters));
+    }
+    function customTagFilterModes() {
+      const res = {};
+      document.querySelectorAll("#customTagFilters select").forEach(sel => {
+        const small = sel.parentElement?.querySelector("small");
+        const tag = small ? small.textContent : "";
+        if (tag) res[tag] = sel.value;
+      });
+      return res;
+    }
+
+    function applyFilters() {
+      const notFeasibleMode = document.getElementById("filterNotFeasible").value;
+      const inspectedMode   = document.getElementById("filterInspected").value;
+      const customModes = customTagFilterModes();
+
+      const conds = activeConditions();
+      const minLen = parseNumber(document.getElementById("minLen").value);
+      const maxLen = parseNumber(document.getElementById("maxLen").value);
+      const minWid = parseNumber(document.getElementById("minWid").value);
+      const maxWid = parseNumber(document.getElementById("maxWid").value);
+
+      markerLayer.clearLayers();
+      lastVisibleRows = [];
+      let visible = 0;
+
+      items.forEach(item => {
+        const r = item.row;
+        const key = uniqueKey(r);
+        const tags = tagState[key] || { notFeasible:false, inspected:false, custom: [] };
+        const custom = Array.isArray(tags.custom) ? tags.custom : [];
+
+        if (notFeasibleMode === "only"   && !tags.notFeasible) return;
+        if (notFeasibleMode === "except" &&  tags.notFeasible) return;
+        if (inspectedMode   === "only"   && !tags.inspected)   return;
+        if (inspectedMode   === "except" &&  tags.inspected)   return;
+
+        for (const [ctag, mode] of Object.entries(customModes)) {
+          if (mode === "only"   && !custom.includes(ctag)) return;
+          if (mode === "except" &&  custom.includes(ctag)) return;
+        }
+
+        const cond = r["Condition"];
+        if (conds.size > 0 && cond && !conds.has(cond)) return;
+
+        const Lm = item.lengthNum, Wm = item.widthNum;
+        if (Number.isFinite(minLen) && Number.isFinite(Lm) && Lm < minLen) return;
+        if (Number.isFinite(maxLen) && Number.isFinite(Lm) && Lm > maxLen) return;
+        if (Number.isFinite(minWid) && Number.isFinite(Wm) && Wm < minWid) return;
+        if (Number.isFinite(maxWid) && Number.isFinite(Wm) && Wm > maxWid) return;
+
+        item.marker.addTo(markerLayer);
+        visible++;
+        lastVisibleRows.push(r);
+      });
+
+      document.getElementById("counter").textContent = `${visible} / ${items.length} visible`;
+    }
+
+    // Search/map commands
+    function zoomToName() {
+      const name = (document.getElementById("searchName").value || "").trim().toLowerCase();
+      if (!name) return;
+      let match = items.find(it => (it.row["Bridge name"] || "").toLowerCase() === name)
+              || items.find(it => (it.row["Bridge name"] || "").toLowerCase().includes(name));
+      if (!match) return;
+      map.setView(match.latlon, 16);
+      if (match.marker) match.marker.openPopup();
+    }
+    function fitToVisible() {
+      const group = L.featureGroup(markerLayer.getLayers());
+      if (group.getLayers().length > 0) map.fitBounds(group.getBounds().pad(0.2));
+    }
+    
+    function mergeRowsWithTags(rowList) {
+      const TAGS_COL = "Tags";
+      if (!rowList || !rowList.length) return { order: [], data: [] };
+
+      // Strip any legacy tag columns from the source rows.
+      const dropCols = new Set(["Tags", "Tags: Custom", "Tag: Not feasible", "Tag: Inspected"]);
+      const baseOrder = Object.keys(rowList[0]).filter(k => !dropCols.has(k) && !/^Tag:/i.test(k));
+      const finalOrder = baseOrder.concat([TAGS_COL]);
+
+      const out = rowList.map(r => {
+        const copy = {};
+        baseOrder.forEach(k => { copy[k] = r[k]; });
+
+        const t = tagState[uniqueKey(r)] || { notFeasible:false, inspected:false, custom: [] };
+        const parts = [];
+        if (t.notFeasible) parts.push("Not feasible");
+        if (t.inspected)   parts.push("Inspected");
+
+        // Clean custom tags (no tabs/newlines)
+        if (Array.isArray(t.custom)) {
+          t.custom.forEach(s => {
+            const clean = String(s || "").replace(/[\t\r\n]/g, " ").trim();
+            if (clean) parts.push(clean);
+          });
+        }
+
+        // Deduplicate, then join with semicolons
+        copy[TAGS_COL] = Array.from(new Set(parts)).join(";");
+        return copy;
+      });
+
+      return { order: finalOrder, data: out };
+    }
+
+    function toCSV(objects, order) {
+      const DELIM = ",";                 // file delimiter
+      const NEEDS_QUOTE = /[",;\t\n]/;   // quote if contains any of these
+      const BOM = "\uFEFF";              // UTF-8 BOM for Excel
+      const SEP = "sep=,\r\n";           // tell Excel to use comma as delimiter
+
+      const esc = (v, force) => {
+        if (v == null) v = "";
+        v = String(v);
+        if (force || NEEDS_QUOTE.test(v)) {
+          v = '"' + v.replace(/"/g, '""') + '"';
+        }
+        return v;
+      };
+
+      // header
+      const header = order.map(h => esc(h, false)).join(DELIM);
+
+      // rows — force-quote Tags column always
+      const lines = objects.map(o =>
+        order.map(k => esc(o[k], k === "Tags")).join(DELIM)
+      );
+
+      // BOM + sep=, + CRLF
+      return BOM + SEP + header + "\r\n" + lines.join("\r\n");
+    }
+
+    function downloadCSV(rowList, filename) {
+      const {order, data} = mergeRowsWithTags(rowList);
+      if (!data.length) { alert("Nothing to export."); return; }
+      const csv = toCSV(data, order);
+      const url = URL.createObjectURL(new Blob([csv], {type:"text/csv;charset=utf-8"}));
+      const a = Object.assign(document.createElement("a"), { href: url, download: filename });
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      unsavedChanges = false;
+    }
+
+    // Wire controls
+    document.getElementById("btnApply").addEventListener("click", applyFilters);
+    document.getElementById("btnReset").addEventListener("click", () => {
+      document.getElementById("filterNotFeasible").value = "any";
+      document.getElementById("filterInspected").value = "any";
+      document.querySelectorAll("#conditionList input[type=checkbox]").forEach(cb => cb.checked = true);
+      populateFilters(); applyFilters();
+    });
+    document.getElementById("btnFit").addEventListener("click", fitToVisible);
+    document.getElementById("btnZoomTo").addEventListener("click", zoomToName);
+    document.getElementById("btnExportAll").addEventListener("click", () => downloadCSV(rows, "MOW_bridge_information2025_with_tags.csv"));
+    document.getElementById("btnExportVisible").addEventListener("click", () => downloadCSV(lastVisibleRows, "MOW_bridge_information2025_visible_with_tags.csv"));
+    document.getElementById("btnClearTags").addEventListener("click", () => {
+      if (confirm("Clear all saved tag states on this device?")) {
+        tagState = {}; saveTags(); unsavedChanges = false; rebuildCustomTagFilters(); applyFilters(); alert("Local tag states cleared.");
+      }
+    });
+    document.getElementById("searchName").addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("btnZoomTo").click(); });
+    window.addEventListener("beforeunload", (e) => { if (unsavedChanges) { e.preventDefault(); e.returnValue = ""; } });
+
+    // Build items and render
+    items = rows.map((r) => {
+      const latlon = parseLatLonFromGoogle(r["Google maps url"]);
+      const findingsNum = parseNumber(r["Findings on concrete"]);
+      const lengthNum = parseNumber(r["Length (m)"]);
+      const widthNum  = parseNumber(r["Width (m)"]);
+      return { row: r, latlon, findingsNum, lengthNum, widthNum, marker: null };
+    });
+    buildMarkers();
+    populateFilters();
+    applyFilters();
+  </script>
+</body>
+</html>

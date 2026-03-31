@@ -1,0 +1,80 @@
+newmtl Solid
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+
+newmtl Bierstalbrug_texturedModel
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Bierstalbrug_texturedModel.jpg
+
+newmtl Bierstalbrug_texturedModel1
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Bierstalbrug_texturedModel1.jpg
+
+newmtl Bierstalbrug_texturedModel2
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Bierstalbrug_texturedModel2.jpg
+
+newmtl Bierstalbrug_texturedModel3
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Bierstalbrug_texturedModel3.jpg
+
+newmtl Bierstalbrug_texturedModel4
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Bierstalbrug_texturedModel4.jpg
+
+newmtl Bierstalbrug_texturedModel5
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Bierstalbrug_texturedModel5.jpg
+
+newmtl Bierstalbrug_texturedModel6
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Bierstalbrug_texturedModel6.jpg
+
+newmtl Bierstalbrug_texturedModel7
+Ka 1.0 1.0 1.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+Ns 0.0
+illum 0
+map_Kd Bierstalbrug_texturedModel7.jpg
+
