@@ -6,9 +6,7 @@ ORBIT was developed to support inspection planning beyond simple top-down waypoi
 
 If your work touches bridge inspection, photogrammetry, digital twins, or damage detection, ORBIT provides a practical planning baseline that can be adapted, benchmarked, and extended in further research.
 
-<p align="center">
-  <img src=".github/readme-assets/orbit-hero.png" alt="ORBIT 3D route planning view" width="1000">
-</p>
+![ORBIT 3D route planning view](.github/readme-assets/orbit-hero.png)
 
 ## Why ORBIT
 
@@ -30,33 +28,25 @@ Key research-relevant capabilities:
 
 ORBIT starts from bridge-specific inspection inputs such as trajectory points, pillar locations, width, and project metadata. The import workflow is coordinate-system aware and intended for engineering data rather than consumer-map-only planning.
 
-<p align="center">
-  <img src=".github/readme-assets/workflow-import.png" alt="ORBIT import and coordinate system selection" width="900">
-</p>
+![ORBIT import and coordinate system selection](.github/readme-assets/workflow-import.png)
 
 ### 2. Reconstruct bridge geometry from a cross-section
 
 The tool supports importing a bridge cross-section and using it to build the geometric basis for later route generation. This makes the planning stage more explicit and reproducible for research workflows that need a well-defined inspection model.
 
-<p align="center">
-  <img src=".github/readme-assets/workflow-cross-section.png" alt="ORBIT bridge cross-section import and scaling" width="900">
-</p>
+![ORBIT bridge cross-section import and scaling](.github/readme-assets/workflow-cross-section.png)
 
 ### 3. Define safety zones on the satellite map
 
 ORBIT lets the user place bridge geometry and operational constraints in map context. Safety zones can be drawn and adjusted directly, which is useful when comparing route strategies, access assumptions, or inspection policies.
 
-<p align="center">
-  <img src=".github/readme-assets/workflow-safety-zones.jpg" alt="ORBIT satellite map with safety zones" width="900">
-</p>
+![ORBIT satellite map with safety zones](.github/readme-assets/workflow-safety-zones.jpg)
 
 ### 4. Generate and inspect 3D flight routes
 
 The final planning stage brings the model, safety zones, and route definitions together in a 3D view. Overview trajectories and under-deck inspection routes can be inspected visually before export.
 
-<p align="center">
-  <img src=".github/readme-assets/workflow-flight-generation.png" alt="ORBIT 3D flight route generation" width="900">
-</p>
+![ORBIT 3D flight route generation](.github/readme-assets/workflow-flight-generation.png)
 
 ## Why researchers may want to use ORBIT
 
