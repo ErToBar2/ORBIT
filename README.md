@@ -3,11 +3,8 @@
 
 <img width="1921" height="1149" alt="0_Cover image 3Dviewer" src="https://github.com/user-attachments/assets/ef9306f4-4e3f-40af-b33d-a7842cc8470c" />
 
-ORBIT was developed to support inspection planning beyond simple top-down waypoint design: it combines project-coordinate-aware data import, bridge geometry reconstruction, satellite-map safety zoning, and 3D route generation for both overview and under-deck inspection flights.
+ORBIT was developed within an ongoing research project to facilitate effective and reliable UAS based bridge inspection missions and was used on over 30 bridges. The concept is to create a save first overview flight and then per bridge section dedicated underdeck inspection flights that visually connect to the overview flight to assure alignment success. Additionally, orbit/tool includes various code to facilitate hihg precision UAS photogrammetry.   
 
-If your work touches bridge inspection, photogrammetry, digital twins, or damage detection, ORBIT provides a practical planning baseline that can be adapted, benchmarked, and extended in further research.
-
-![ORBIT 3D route planning view](.github/readme-assets/orbit-hero.png)
 
 ## Why ORBIT
 
@@ -19,9 +16,9 @@ Key research-relevant capabilities:
 - Support difficult bridge geometries, including curved bridges.
 - Generate routes for under-deck inspection in GNSS-loss or GNSS-degraded environments.
 - Define and visualize safety zones directly on the satellite map.
-- Work with project coordinate systems instead of forcing a purely WGS84-only workflow.
+- Work with any internal project coordinate systems. 
 - Build 3D inspection geometry from imported trajectory, pillars, and bridge cross-section information.
-- Design missions for high-resolution acquisition; in our demonstrated use case, ORBIT supported planning toward a **1 mm/px GSD**.
+- Design missions for high-resolution acquisition. We achieved **1 mm/px GSD** facade inspection using a DJI Mavic 3 Enterprise. 
 
 ## Workflow
 
@@ -29,25 +26,26 @@ Key research-relevant capabilities:
 
 ORBIT starts from bridge-specific inspection inputs such as trajectory points, pillar locations, width, and project metadata. The import workflow is coordinate-system aware and intended for engineering data rather than consumer-map-only planning.
 
-![ORBIT import and coordinate system selection](.github/readme-assets/workflow-import.png)
+<img width="1928" height="1035" alt="1_start- Data import option chosing EPSG code " src="https://github.com/user-attachments/assets/10e857e2-c005-45b4-8ee8-15f02d015120" />
 
 ### 2. Reconstruct bridge geometry from a cross-section
 
 The tool supports importing a bridge cross-section and using it to build the geometric basis for later route generation. This makes the planning stage more explicit and reproducible for research workflows that need a well-defined inspection model.
 
-![ORBIT bridge cross-section import and scaling](.github/readme-assets/workflow-cross-section.png)
+<img width="1918" height="1153" alt="2_ start - importing CV crosssection extraction" src="https://github.com/user-attachments/assets/a1d7e6b6-1b95-4bef-b954-a2337353be02" />
+
 
 ### 3. Define safety zones on the satellite map
 
 ORBIT lets the user place bridge geometry and operational constraints in map context. Safety zones can be drawn and adjusted directly, which is useful when comparing route strategies, access assumptions, or inspection policies.
 
-![ORBIT satellite map with safety zones](.github/readme-assets/workflow-safety-zones.jpg)
+<img width="1920" height="1157" alt="3 Satellite image safety zone mapping" src="https://github.com/user-attachments/assets/d5817d6f-298d-4739-997a-93ea58a22872" />
 
 ### 4. Generate and inspect 3D flight routes
 
 The final planning stage brings the model, safety zones, and route definitions together in a 3D view. Overview trajectories and under-deck inspection routes can be inspected visually before export.
 
-![ORBIT 3D flight route generation](.github/readme-assets/workflow-flight-generation.png)
+<img width="1920" height="1160" alt="4 Flighr route optionsPNG" src="https://github.com/user-attachments/assets/50c59ad9-7da2-4bd2-9c3e-b7f54991adc2" />
 
 ## Why researchers may want to use ORBIT
 
@@ -87,7 +85,3 @@ If the 3D view fails because Qt bindings are missing, install the missing runtim
 ```bash
 python -m pip install qtpy pyvistaqt
 ```
-
-## Repository Focus
-
-This repository is intended to support continued research and experimentation around bridge inspection flight planning. Contributions, adaptations to new bridge types, and connections to downstream inspection-analysis tasks are all natural next steps.
