@@ -1,5 +1,5 @@
 # ORBIT
-**O**ptimized **R**outing for **B**ridge **I**nspection **T**oolkit is an open-source, research-oriented UAS flight planning tool for bridge inspection missions under realistic geometric and operational constraints.
+**O**ptimized **R**outing for **B**ridge **I**nspection **T**oolkit is an open-source, research-oriented UAS flight planning tool to generate waypoint flight routes optimized for bridge inspections under realistic geometric and operational constraints.
 
 <img width="1921" height="1149" alt="0_Cover image 3Dviewer" src="https://github.com/user-attachments/assets/ef9306f4-4e3f-40af-b33d-a7842cc8470c" />
 
