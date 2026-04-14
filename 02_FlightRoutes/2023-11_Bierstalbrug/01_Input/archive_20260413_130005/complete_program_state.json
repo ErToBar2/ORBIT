@@ -1,0 +1,611 @@
+{
+  "metadata": {
+    "created_date": "2026-04-13T12:59:34.262666",
+    "program_version": "ORBIT v01.2.2.py",
+    "save_type": "complete_program_state",
+    "snapshot_version": 1
+  },
+  "project_settings": {
+    "bridge_name": "2023-11_Bierstalbrug",
+    "import_dir": "C:\\Code\\_Orbitv1.2.2\\01_ImportFolder",
+    "project_dir_base": "C:\\Code\\_Orbitv1.2.2\\02_FlightRoutes",
+    "conda_environment": "Orbit",
+    "trajectory_heights": "[6.4, 6.4] # Approx. height of bridge trajectory above starting point, quadratic approx.",
+    "ground_elevation": 0,
+    "coordinate_system": "Lambert2008",
+    "heightStartingPoint_Ellipsoid": 0,
+    "heightStartingPoint_Reference": 0,
+    "input_scale_meters": 17.279,
+    "epsilonInput": 0.003,
+    "trajectory_points_count": 5,
+    "pillars_count": 4,
+    "trajectory_length": 131.36,
+    "average_pillar_height": 7.94,
+    "epsg_code": 3812
+  },
+  "flight_route_settings": {
+    "transition_mode": 2,
+    "num_passes": 2,
+    "num_passes_middle": 4,
+    "safety_check_photo": 1,
+    "n_girders": 3,
+    "underdeck_split": 1,
+    "underdeck_axial": 0,
+    "droneEnumValue": 77,
+    "payloadEnumValue": 66,
+    "connection_height": 25.0,
+    "general_height_offset": 1.0,
+    "transition_vertical_offset": 15.0,
+    "transition_horizontal_offset": 15.0,
+    "heightStartingPoint_Ellipsoid": 0.0,
+    "heightStartingPoint_Reference": 0.0,
+    "order": [
+      "101",
+      "r101",
+      "102",
+      "r102",
+      "103",
+      "r103",
+      "transition_mode",
+      "201",
+      "r201",
+      "202",
+      "r202",
+      "203",
+      "r203"
+    ],
+    "num_points": [
+      3,
+      7,
+      3
+    ],
+    "horizontal_offsets_underdeck": [
+      8,
+      8,
+      8
+    ],
+    "custom_zone_angles": [],
+    "thresholds_zones": [
+      [
+        10,
+        10
+      ],
+      [
+        8,
+        8
+      ],
+      [
+        10,
+        10
+      ]
+    ],
+    "safety_check_underdeck": [
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        0
+      ]
+    ],
+    "safety_check_underdeck_axial": [
+      [
+        0
+      ],
+      [
+        0
+      ],
+      [
+        0
+      ]
+    ],
+    "height_offsets_underdeck": [
+      [
+        5,
+        5,
+        5
+      ],
+      [
+        5,
+        5,
+        5
+      ],
+      [
+        5,
+        5,
+        5
+      ]
+    ],
+    "safety_zones_clearance": [
+      [
+        0,
+        25
+      ],
+      [
+        0,
+        25
+      ],
+      [
+        0,
+        25
+      ]
+    ],
+    "safety_zones_clearance_adjust": [
+      [
+        25
+      ],
+      [
+        25
+      ],
+      [
+        25
+      ]
+    ],
+    "standard_flight_routes": {
+      "101": {
+        "vertical_offset": 12,
+        "distance_offset": 12
+      },
+      "102": {
+        "vertical_offset": 8,
+        "distance_offset": 8
+      },
+      "103": {
+        "vertical_offset": -2,
+        "distance_offset": 7
+      },
+      "201": {
+        "vertical_offset": 12,
+        "distance_offset": 12
+      },
+      "202": {
+        "vertical_offset": 8,
+        "distance_offset": 8
+      },
+      "203": {
+        "vertical_offset": -2,
+        "distance_offset": 7
+      }
+    },
+    "flight_speed_map": {
+      "101": {
+        "speed": "5"
+      },
+      "102": {
+        "speed": "4"
+      },
+      "201": {
+        "speed": "5"
+      },
+      "202": {
+        "speed": "4"
+      },
+      "103": {
+        "speed": "2"
+      },
+      "203": {
+        "speed": "2"
+      },
+      "104": {
+        "speed": "3"
+      },
+      "105": {
+        "speed": "2"
+      },
+      "204": {
+        "speed": "3"
+      },
+      "205": {
+        "speed": "2"
+      },
+      "transition": {
+        "speed": "5"
+      },
+      "underdeck_span1": {
+        "speed": "0.8"
+      },
+      "underdeck_span2": {
+        "speed": "0.85"
+      },
+      "underdeck_span3": {
+        "speed": "0.8"
+      },
+      "connection": {
+        "speed": "2.5"
+      },
+      "axial_span1": {
+        "speed": "1.0"
+      },
+      "axial_span2": {
+        "speed": "1.0"
+      },
+      "axial_span3": {
+        "speed": "1.0"
+      }
+    },
+    "heightMode": "EGM96",
+    "globalWaypointTurnMode": "toPointAndStopWithDiscontinuityCurvature"
+  },
+  "current_geometry": {
+    "trajectory_points": [],
+    "trajectory_list": [
+      [
+        98771.58593799989,
+        198186.10937499907,
+        14.888456
+      ],
+      [
+        98770.101562,
+        198218.43750000064,
+        16.164015
+      ],
+      [
+        98768.257812,
+        198257.1718750003,
+        16.807394
+      ],
+      [
+        98766.99218800012,
+        198285.1718750004,
+        16.136112
+      ],
+      [
+        98765.460938,
+        198317.328125,
+        14.893839
+      ]
+    ],
+    "pillars": [],
+    "pillars_list": [
+      [
+        [
+          98779.23437500012,
+          198219.20312500012,
+          8.389997
+        ],
+        [
+          98760.70312499988,
+          198218.24999999854,
+          7.795067
+        ]
+      ],
+      [
+        [
+          98776.36718800012,
+          198284.68750000128,
+          7.817492
+        ],
+        [
+          98757.757812,
+          198283.87499999988,
+          7.760585
+        ]
+      ]
+    ],
+    "abutment_list": [],
+    "safety_zones": [],
+    "safety_zones_resolved": [],
+    "safety_zones_history": [],
+    "current_zone_points": [],
+    "zone_points_history": [],
+    "cross_section_points": [
+      [
+        9.331303538175046,
+        0.0
+      ],
+      [
+        -8.848649906890131,
+        0.06435381750465549
+      ],
+      [
+        -8.848649906890131,
+        0.3217690875232775
+      ],
+      [
+        -7.336335195530726,
+        0.9009534450651768
+      ],
+      [
+        -7.336335195530726,
+        2.252383612662942
+      ],
+      [
+        -7.625927374301676,
+        2.6063296089385473
+      ],
+      [
+        -6.692797020484171,
+        2.6063296089385473
+      ],
+      [
+        -6.982389199255121,
+        2.252383612662942
+      ],
+      [
+        -6.789327746741154,
+        0.8687765363128491
+      ],
+      [
+        -4.376059590316573,
+        0.8687765363128491
+      ],
+      [
+        -4.343882681564246,
+        2.252383612662942
+      ],
+      [
+        -4.633474860335196,
+        2.6063296089385473
+      ],
+      [
+        -3.7003445065176908,
+        2.6063296089385473
+      ],
+      [
+        -3.9899366852886406,
+        2.252383612662942
+      ],
+      [
+        -3.957759776536313,
+        0.8044227188081936
+      ],
+      [
+        -1.4479608938547486,
+        0.8044227188081936
+      ],
+      [
+        -1.4157839851024208,
+        2.252383612662942
+      ],
+      [
+        -1.7053761638733704,
+        2.6063296089385473
+      ],
+      [
+        -0.7722458100558659,
+        2.6063296089385473
+      ],
+      [
+        -1.0618379888268157,
+        2.252383612662942
+      ],
+      [
+        -1.0296610800744879,
+        0.8044227188081936
+      ],
+      [
+        1.512314711359404,
+        0.8044227188081936
+      ],
+      [
+        1.5444916201117318,
+        2.252383612662942
+      ],
+      [
+        1.2548994413407821,
+        2.6063296089385473
+      ],
+      [
+        2.1880297951582866,
+        2.6063296089385473
+      ],
+      [
+        1.898437616387337,
+        2.252383612662942
+      ],
+      [
+        1.898437616387337,
+        0.8365996275605214
+      ],
+      [
+        4.472590316573557,
+        0.8044227188081936
+      ],
+      [
+        4.504767225325884,
+        2.252383612662942
+      ],
+      [
+        4.2151750465549345,
+        2.6063296089385473
+      ],
+      [
+        5.14830540037244,
+        2.6063296089385473
+      ],
+      [
+        4.85871322160149,
+        2.252383612662942
+      ],
+      [
+        4.890890130353817,
+        0.8044227188081936
+      ],
+      [
+        7.432865921787709,
+        0.8365996275605214
+      ],
+      [
+        7.465042830540037,
+        2.28456052141527
+      ],
+      [
+        7.175450651769087,
+        2.638506517690875
+      ],
+      [
+        8.108581005586592,
+        2.638506517690875
+      ],
+      [
+        7.818988826815643,
+        2.28456052141527
+      ],
+      [
+        7.818988826815643,
+        0.8687765363128491
+      ],
+      [
+        8.526880819366852,
+        0.4504767225325884
+      ],
+      [
+        9.170418994413408,
+        0.5148305400372439
+      ]
+    ],
+    "counts": {
+      "trajectory_points": 0,
+      "pillars": 0,
+      "safety_zones": 0,
+      "zone_points": 0,
+      "cross_section_points": 41
+    }
+  },
+  "coordinate_system": {
+    "selected_system": "Lambert2008",
+    "context_available": true,
+    "transform_function_available": false,
+    "last_project_coordinate_system": "WGS84_Fallback"
+  },
+  "bridge_model": {
+    "bridge_object_available": true,
+    "context_object_available": true,
+    "cross_section_path": "C:\\Code\\_Orbitv1.2.2\\01_ImportFolder\\2023-11_Bierstalbrug_crosssection.png",
+    "cross_section_processed": true
+  },
+  "flight_routes": {
+    "overview_waypoints_available": false,
+    "underdeck_waypoints_available": false,
+    "overview_waypoints_count": 0,
+    "underdeck_waypoints_count": 0,
+    "overview_waypoints": [],
+    "underdeck_routes": [],
+    "underdeck_routes_original": [],
+    "underdeck_waypoints": [],
+    "underdeck_waypoints_axial": []
+  },
+  "ui_state": {
+    "current_tab": 0,
+    "drawing_mode": null,
+    "current_zone_id": 0,
+    "visualizer_available": false,
+    "flight_route_transform_selection": {
+      "current_index": 0,
+      "current_data": null,
+      "items": [
+        {
+          "text": "Select Flight Route",
+          "data": null
+        }
+      ]
+    },
+    "flight_route_offset_sliders": {
+      "x": {
+        "value": 0,
+        "minimum": -50,
+        "maximum": 50,
+        "text": "0.0"
+      },
+      "y": {
+        "value": 0,
+        "minimum": -50,
+        "maximum": 50,
+        "text": "0.0"
+      },
+      "z": {
+        "value": 0,
+        "minimum": -20,
+        "maximum": 20,
+        "text": "0.0"
+      }
+    },
+    "stored_slider_settings": {},
+    "text_edits": {
+      "project_text_edit": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr { height: 1px; border-width: 0; }\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">Project Information</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\">bridge_name = </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#00aaff;\">2023-11_Bierstalbrug </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;\"># Input data should have {</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\">bridge_name</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#6a9955;\">}</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\"> </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#6a9955;\">and be in</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\"> import_dir</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\">import_dir = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#aaaaff;\">C:\\Code\\_Orbitv1.2.2\\01_ImportFolder</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\">project_dir_base = </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#00aaff;\">C:\\Code\\_Orbitv1.2.2\\02_FlightRoutes </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;\"># base for the project output</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\">conda_environment = Orbit</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#00aaff;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;\"># conda info --envs</span></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8.25pt;\"><br /></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">Trajectory </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; text-decoration: underline; color:#e7e7e7;\">(If no import data available)</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">: </span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\">trajectory_heights = </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#00aaff;\">[6.4, 6.4] </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#6a9955;\"># Approx. height of bridge trajectory above starting point, quadratic approx. </span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Aptos,sans-serif'; font-size:11pt; color:#e7e7e7;\">ground_elevation</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\"> = </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#00aaff;\">0 </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#6a9955;\"># Purely cosmetic. Defines pillar base altitude. </span></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8.25pt;\"><br /></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">Coordinate system:</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\">coordinate_system = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#aaaaff;\">Lambert2008</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#00aaff;\"> </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#6a9955;\"># </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;\">Lambert2008, Lambert72, or any EPSG code </span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#e7e7e7;\">heightStartingPoint_Ellipsoid</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#e7e7e7;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#00aaff;\">0</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\"> </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#e7e7e7;\">heightStartingPoint_Reference</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#e7e7e7;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#00aaff;\">0</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\"> </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:6pt; color:#ce9178;\"> </span></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">Cross-section:</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\">input_scale_meters = </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#00aaff;\">17.279 </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#6a9955;\"># Mark one distance in green. bridge_width is the largest distance across.</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\">epsilonInput =</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#00aaff;\"> 0.003 </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#6a9955;\"># Smaller value is tighter fit</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:6pt; color:#6a9955;\"> </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">Imported data:</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; color:#e7e7e7;\">trajectory_points_count = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#aaaaff;\">5</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; color:#e7e7e7;\">pillars_count = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#aaaaff;\">4</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; color:#e7e7e7;\">trajectory_length = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#aaaaff;\">131.36</span></p>\n<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; color:#e7e7e7;\">average_pillar_height = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#aaaaff;\">7.94</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">epsg_code = <span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#aaaaff;\">3812</span></p></body></html>",
+      "flight_routes_text_edit": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr { height: 1px; border-width: 0; }\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">Overview Flight: </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">order</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> [</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;101&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">, </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;r101&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">,</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;102&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">,</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;r102&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">,</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;103&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">,</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;r103&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">,</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#9cdcfe;\">transition_mode</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">,</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;201&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">, </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;r201&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">,</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;202&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">, </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;r202&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">,</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;203&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">, </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;r203&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">] </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># 1=right side, r=reverse. useing offsets as in </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">standard_flight_routes (</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\">below)</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#9cdcfe;\">transition_mode</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\"> = </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#ce9178;\">2</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># 0 = separate right and left side, 1=pass middle, 2=after last segment</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">transition_vertical_offset = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">15 </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># Or underneath e.g. -6 </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">transition_horizontal_offset = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">15</span></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8.25pt;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">Safety Zones:</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">safety_zones_clearance</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">[[0,25],[0,25],[0,25]]</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\">#min, max local. default 0,35 m</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"><br /></span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">safety_zones_clearance_adjust</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">[[25],[25],[25]]</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># adjust points inside zones. 0 = delete points, -1 find closest exit</span></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8.25pt;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">Underdeck Flights: </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">num_points</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">[3, 7, 3]</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># Base points per section </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">horizontal_offsets_underdeck</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">[8, 8, 8]</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># H_Offest of base points </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">height_offsets_underdeck</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">[[5, 5, 5], [5, 5, 5], [5, 5, 5]]</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># Vertical offset below trajectory (consider slab) using quadratic approx per base point.</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">general_height_offset</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\"> 1</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">thresholds_zones</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">[(10, 10), (8, 8), (10, 10)]</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># Threshold distance </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">custom_zone_angles = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">[]</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\"># </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\">[2.16, 2.20, 2.24]</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:8pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># Adjust angle</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">connection_height </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\"> 25</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#b5cea8;\">\t</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># vertical flight height for connections</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">num_passes</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">2\t\t</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># num passes underdeck flighs</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">num_passes_middle</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">4</span></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">Export Modus:</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">heightMode = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">EGM96 </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\">#</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">relativeToStartPoint</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"> or EGM96</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">heightStartingPoint_Ellipsoid = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">0 </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># Typically </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">50.2 m </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\">in Belgium.</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\">Place drone on ground and read EXIF from image / RTK settings</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">heightStartingPoint_Reference = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">0 </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># Typically </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">8.0 m</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\">.</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\">Height in geolocated point cloud </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># Z waypoint= bridge trajectory (e.g. </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\">trajectory_heights)</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"> + offsets + </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">heightStartingPoint_Ellipsoid - heightStartingPoint_Reference</span></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">Additional Features:</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">safety_check_photo </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">= </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">1</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">safety_check_underdeck </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">= </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">[[0],[0],[0]]</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># 1 = execute safety check. </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">safety_check_underdeck_axial </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">= </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">[[0],[0],[0]]</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># 1 = execute safety check.</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#9cdcfe;\">n_girders</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\"> = </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#ce9178;\">3</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#9cdcfe;\">underdeck_split</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\"> = </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#ce9178;\">1</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#9cdcfe;\">underdeck_axial</span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#e7e7e7;\"> = </span><span style=\" font-family:'MS Shell Dlg 2'; font-size:11pt; color:#ce9178;\">0</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">droneEnumValue = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">77 </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># M3E = 77 </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">payloadEnumValue = </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">66 </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># M3E = 66 </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Segoe WPC,Segoe UI,sans-serif'; font-size:11pt; color:#9cdcfe;\">globalWaypointTurnMode</span><span style=\" font-family:'Segoe WPC,Segoe UI,sans-serif'; font-size:11pt; color:#d8dee9;\"> </span><span style=\" font-family:'Segoe WPC,Segoe UI,sans-serif'; font-size:11pt; color:#9cdcfe;\">=</span><span style=\" font-family:'Segoe WPC,Segoe UI,sans-serif'; font-size:11pt; color:#d8dee9;\"> </span><span style=\" font-family:'Segoe WPC,Segoe UI,sans-serif'; font-size:11pt; color:#ce9178;\">toPointAndStopWithDiscontinuityCurvature </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"># coordinateTurn, toPointAndStopWithContinuityCurvature, toPointAndPassWithContinuityCurvature</span></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#4eea00;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">standard_flight_routes</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> {</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;101&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;vertical_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: 12, </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;distance_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: 12},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;102&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;vertical_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: 8, </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;distance_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: 8},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;103&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;vertical_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: -2, </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;distance_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: 7},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;201&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;vertical_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: 12, </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;distance_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: 12},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;202&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;vertical_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: 8, </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;distance_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: 8},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;203&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;vertical_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: -2, </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;distance_offset&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: 7}}</span></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"><br /></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#9cdcfe;\">flight_speed_map</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#d4d4d4;\">=</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\"> {</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;101&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;5&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;102&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;4&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;201&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;5&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;202&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;4&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;103&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;2&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;203&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;2&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;104&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;3&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;105&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;2&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;204&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;3&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;205&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;2&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;transition&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;5&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},<br /></span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;underdeck_span1&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;0.8&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;underdeck_span2&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;0.85&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;underdeck_span3&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;0.8&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;connection&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;2.5&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},\t </span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;axial_span1&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;1.0&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;axial_span2&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;1.0&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">},</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;axial_span3&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: {</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;speed&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">: </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#ce9178;\">&quot;1.0&quot;</span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">}</span></p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#cccccc;\">}}</span></p></body></html>",
+      "waypoints_text_box": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr { height: 1px; border-width: 0; }\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:5px; margin-bottom:5px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; font-size:10pt; font-weight:700; color:#d6d6d6;\">Overview Flight Waypoints</span></p>\n<p style=\" margin-top:5px; margin-bottom:5px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; font-size:10pt; color:#00ff00;\">0 waypoints</span></p>\n<p style=\" margin-top:3px; margin-bottom:3px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; color:#cccccc;\">Angle threshold: 15°</span></p>\n<hr />\n<p style=\" margin-top:5px; margin-bottom:5px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; font-weight:700; color:#d6d6d6;\">Visualization Controls:</span></p>\n<p style=\" margin-top:2px; margin-bottom:2px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; font-size:8pt; color:#d6d6d6;\">W - Wireframe</span></p>\n<p style=\" margin-top:2px; margin-bottom:2px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; font-size:8pt; color:#d6d6d6;\">S - Faces</span></p>\n<p style=\" margin-top:2px; margin-bottom:2px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; font-size:8pt; color:#d6d6d6;\">E - Opacity</span></p>\n<p style=\" margin-top:2px; margin-bottom:2px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; font-size:8pt; color:#d6d6d6;\">R - Orthogonal view</span></p>\n<p style=\" margin-top:2px; margin-bottom:2px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; font-size:8pt; color:#d6d6d6;\">V - View all</span></p>\n<p style=\" margin-top:2px; margin-bottom:2px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; font-size:8pt; color:#d6d6d6;\">F - Focus</span></p>\n<p style=\" margin-top:2px; margin-bottom:2px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; font-size:8pt; color:#d6d6d6;\">Shift - Pan</span></p>\n<p style=\" margin-top:2px; margin-bottom:2px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Arial','sans-serif'; font-size:8pt; color:#d6d6d6;\">Ctrl - Rotate</span></p></body></html>"
+    }
+  },
+  "parsed_data_state": {
+    "project_keys": [
+      "bridge_name",
+      "import_dir",
+      "project_dir_base",
+      "conda_environment",
+      "trajectory_heights",
+      "ground_elevation",
+      "coordinate_system",
+      "heightStartingPoint_Ellipsoid",
+      "heightStartingPoint_Reference",
+      "input_scale_meters",
+      "epsilonInput",
+      "trajectory_points_count",
+      "pillars_count",
+      "trajectory_length",
+      "average_pillar_height",
+      "epsg_code"
+    ],
+    "flight_route_keys": [
+      "transition_mode",
+      "num_passes",
+      "num_passes_middle",
+      "safety_check_photo",
+      "n_girders",
+      "underdeck_split",
+      "underdeck_axial",
+      "droneEnumValue",
+      "payloadEnumValue",
+      "connection_height",
+      "general_height_offset",
+      "transition_vertical_offset",
+      "transition_horizontal_offset",
+      "heightStartingPoint_Ellipsoid",
+      "heightStartingPoint_Reference",
+      "order",
+      "num_points",
+      "horizontal_offsets_underdeck",
+      "custom_zone_angles",
+      "thresholds_zones",
+      "safety_check_underdeck",
+      "safety_check_underdeck_axial",
+      "height_offsets_underdeck",
+      "safety_zones_clearance",
+      "safety_zones_clearance_adjust",
+      "standard_flight_routes",
+      "flight_speed_map",
+      "heightMode",
+      "globalWaypointTurnMode"
+    ]
+  },
+  "safety_validation": {
+    "safety_zones_exist": false,
+    "safety_check_photo_enabled": true,
+    "safety_check_underdeck_enabled": false
+  },
+  "file_paths": {
+    "project_directory": "C:\\Code\\_Orbitv1.2.2\\02_FlightRoutes\\2023-11_Bierstalbrug",
+    "input_directory": "C:\\Code\\_Orbitv1.2.2\\02_FlightRoutes\\2023-11_Bierstalbrug\\01_Input",
+    "visualization_directory": "C:\\Code\\_Orbitv1.2.2\\02_FlightRoutes\\2023-11_Bierstalbrug\\02_Visualization",
+    "temp_directory": "C:\\Code\\_Orbitv1.2.2\\02_FlightRoutes\\2023-11_Bierstalbrug\\02_Visualization\\temp",
+    "last_save_directory": ".",
+    "last_bridge_name": "2023-11_Bierstalbrug"
+  },
+  "visualization_state": {
+    "assets": [],
+    "camera": null,
+    "visualizer_available": false
+  },
+  "import_operations": {
+    "bridge_import": {
+      "file_path": "C:\\Code\\_Orbitv1.2.2\\01_ImportFolder\\2023-11_Bierstalbrug.txt",
+      "coordinate_system": "Lambert2008",
+      "custom_epsg": null,
+      "swap_xy": false,
+      "updated_at": "2026-04-13T12:59:34.260664"
+    },
+    "model_imports": []
+  }
+}

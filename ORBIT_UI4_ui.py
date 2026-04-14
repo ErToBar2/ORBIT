@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ORBIT_UI4.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.2
+## Created by: Qt User Interface Compiler version 6.9.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -1070,7 +1070,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ORBIT v.1.2.1 - Optimized Routing for Bridge Inspection Toolkit  (Research only)", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ORBIT v.1.2.2 - Optimized Routing for Bridge Inspection Toolkit  (Research only)", None))
         self.tab0Label.setStyleSheet(QCoreApplication.translate("MainWindow", u"color: white; font-weight: bold; text-align: center;", None))
         self.tab0Label.setText(QCoreApplication.translate("MainWindow", u"Project Setup", None))
         self.label.setText("")
@@ -1265,8 +1265,8 @@ class Ui_MainWindow(object):
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; font-weight:600; text-decoration: underline; color:#e7e7e7;\">Project Information</span></p>\n"
 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; color:#e7e7e7;\">bridge_name = </span><span style=\" font-size:11pt; color:#00aaff;\">TestBridge </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;\"># Input data should have {</span><span style=\" font-size:11p"
                         "t; color:#e7e7e7;\">bridge_name</span><span style=\" font-size:11pt; color:#6a9955;\">}</span><span style=\" font-size:11pt; color:#e7e7e7;\"> </span><span style=\" font-size:11pt; color:#6a9955;\">and be in</span><span style=\" font-size:11pt; color:#e7e7e7;\"> import_dir</span></p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; color:#e7e7e7;\">import_dir = </span><span style=\" font-size:11pt; color:#00aaff;\">C:\\Code\\_Orbitv1.2.1\\01_ImportFolder</span></p>\n"
-"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; color:#e7e7e7;\">project_dir_base = </span><span style=\" font-size:11pt; color:#00aaff;\">C:\\Code\\_Orbitv1.2.1\\02_FlightRoutes </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;\"># base for the project output</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; color:#e7e7e7;\">import_dir = </span><span style=\" font-size:11pt; color:#00aaff;\">C:\\Code\\_Orbitv1.2.2\\01_ImportFolder</span></p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; color:#e7e7e7;\">project_dir_base = </span><span style=\" font-size:11pt; color:#00aaff;\">C:\\Code\\_Orbitv1.2.2\\02_FlightRoutes </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;\"># base for the project output</span></p>\n"
 "<p style=\""
                         " margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt; color:#e7e7e7;\">conda_environment = Orbit</span><span style=\" font-size:11pt; color:#00aaff;\"> </span><span style=\" font-family:'Consolas,Courier New,monospace'; font-size:11pt; color:#6a9955;\"># conda info --envs</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"

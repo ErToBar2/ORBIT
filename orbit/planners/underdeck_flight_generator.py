@@ -565,6 +565,9 @@ def _get_pillar_pairs_sorted_by_chain(app, traj_np: np.ndarray):
     elif app is not None and getattr(app, "current_pillars", None):
         def _proj(lat, lon):
             try:
+                if hasattr(app, '_wgs84_to_active_metric') and callable(getattr(app, '_wgs84_to_active_metric', None)):
+                    x, y, _ = app._wgs84_to_active_metric(float(lat), float(lon), 0.0)
+                    return float(x), float(y)
                 if getattr(app, "_last_transform_func", None):
                     x, y, _ = app._last_transform_func(float(lat), float(lon), 0.0)
                     return float(x), float(y)
@@ -1379,11 +1382,13 @@ def _apply_safety_checks_to_routes(routes: List[Dict[str, Any]], params: Dict[st
                     # Points are stored as [lat, lng] in WGS84
                     lat, lng = point[0], point[1]
                     # Use same transformation logic as FlightPathConstructor
-                    if hasattr(app, '_last_transform_func') and app._last_transform_func:
-                        x, y, _ = app._last_transform_func(lat, lng, 0)
+                    if hasattr(app, '_wgs84_to_active_metric') and callable(getattr(app, '_wgs84_to_active_metric', None)):
+                        x, y, _ = app._wgs84_to_active_metric(lat, lng, 0.0)
+                    elif hasattr(app, '_last_transform_func') and app._last_transform_func:
+                        x, y, _ = app._last_transform_func(lat, lng, 0.0)
                     elif hasattr(app, 'current_context') and app.current_context:
                         # Fall back to project context CRS
-                        x, y, _ = app.current_context.wgs84_to_project(lng, lat, 0)
+                        x, y, _ = app.current_context.wgs84_to_project(lng, lat, 0.0)
                     else:
                         # Absolute fallback – leave in degrees so that we do not crash
                         x, y = lng, lat
@@ -1742,11 +1747,14 @@ def _derive_sections_and_angles_from_pillars(trajectory_samples, app=None):
     elif app is not None and getattr(app, "current_pillars", None):
         def _proj(lat, lon):
             try:
+                if hasattr(app, '_wgs84_to_active_metric') and callable(getattr(app, '_wgs84_to_active_metric', None)):
+                    x, y, _ = app._wgs84_to_active_metric(float(lat), float(lon), 0.0)
+                    return float(x), float(y)
                 if getattr(app, "_last_transform_func", None):
-                    x, y, _ = app._last_transform_func(float(lat), float(lon), 0.0)  # your app uses (lat,lon)
+                    x, y, _ = app._last_transform_func(float(lat), float(lon), 0.0)
                     return float(x), float(y)
                 if getattr(app, "current_context", None):
-                    x, y, _ = app.current_context.wgs84_to_project(float(lon), float(lat), 0.0)  # (lon,lat)
+                    x, y, _ = app.current_context.wgs84_to_project(float(lon), float(lat), 0.0)
                     return float(x), float(y)
             except Exception:
                 pass
@@ -1859,40 +1867,22 @@ def _calculate_pillar_distances(trajectory_samples: List, num_spans: int, app=No
     # ---- extract pillar centerpoints (projected XY) ----
     pillar_centers_xy: List[np.ndarray] = []
 
-    def _project_wgs84_guess(lat, lon) -> Tuple[float, float]:
-        """
-        Try (lon,lat) and (lat,lon); pick the one whose XY is closer to the trajectory.
-        This makes us robust to mixed argument orders.
-        """
-        def _closest_dist(pt):
-            # distance from pt to polyline
-            dmin = float("inf")
-            for i in range(1, len(traj)):
-                a = traj[i-1][:2]; b = traj[i][:2]
-                ab = b - a
-                if np.allclose(ab, 0): 
-                    d = np.linalg.norm(pt - a)
-                else:
-                    t = np.clip(np.dot(pt - a, ab) / np.dot(ab, ab), 0.0, 1.0)
-                    p = a + t * ab
-                    d = np.linalg.norm(pt - p)
-                dmin = min(dmin, d)
-            return dmin
-
-        # try both orders (lon,lat) vs (lat,lon)
-        if hasattr(app, 'current_context') and app.current_context:
-            x1, y1, _ = app.current_context.wgs84_to_project(lon, lat, 0.0)  # (lon, lat)
-            x2, y2, _ = app.current_context.wgs84_to_project(lat, lon, 0.0)  # (lat, lon) fallback
-        elif hasattr(app, '_last_transform_func') and app._last_transform_func:
-            x1, y1, _ = app._last_transform_func(lat, lon, 0.0)               # legacy path
-            x2, y2, _ = app._last_transform_func(lon, lat, 0.0)               # swapped fallback
-        else:
-            # no context; just return as-is (best-effort)
-            return float(lon), float(lat)
-
-        cand1 = np.array([x1, y1], dtype=float)
-        cand2 = np.array([x2, y2], dtype=float)
-        return (cand1 if _closest_dist(cand1) <= _closest_dist(cand2) else cand2).tolist()
+    def _project_wgs84(lat, lon) -> Tuple[float, float]:
+        """Project WGS84 (lat, lon) to active metric/project coordinates with fixed axis order."""
+        try:
+            if hasattr(app, '_wgs84_to_active_metric') and callable(getattr(app, '_wgs84_to_active_metric', None)):
+                x, y, _ = app._wgs84_to_active_metric(float(lat), float(lon), 0.0)
+                return float(x), float(y)
+            if hasattr(app, '_last_transform_func') and app._last_transform_func:
+                x, y, _ = app._last_transform_func(float(lat), float(lon), 0.0)
+                return float(x), float(y)
+            if hasattr(app, 'current_context') and app.current_context:
+                x, y, _ = app.current_context.wgs84_to_project(float(lon), float(lat), 0.0)
+                return float(x), float(y)
+        except Exception:
+            pass
+        # conservative fallback
+        return float(lon), float(lat)
 
     def _as_xy_points(pillar_entry) -> List[np.ndarray]:
         """
@@ -1910,22 +1900,22 @@ def _calculate_pillar_distances(trajectory_samples: List, num_spans: int, app=No
                 pts.append(np.array([pillar_entry['x'], pillar_entry['y']], dtype=float))
             elif 'points' in pillar_entry and isinstance(pillar_entry['points'], (list, tuple)) and len(pillar_entry['points']) >= 2:
                 a, b = pillar_entry['points'][0], pillar_entry['points'][1]
-                ax, ay = _project_wgs84_guess(a[0], a[1])
-                bx, by = _project_wgs84_guess(b[0], b[1])
+                ax, ay = _project_wgs84(a[0], a[1])
+                bx, by = _project_wgs84(b[0], b[1])
                 pts.extend([np.array([ax, ay]), np.array([bx, by])])
             elif {'lat','lon'} <= set(pillar_entry.keys()):
-                x, y = _project_wgs84_guess(pillar_entry['lat'], pillar_entry['lon'])
+                x, y = _project_wgs84(pillar_entry['lat'], pillar_entry['lon'])
                 pts.append(np.array([x, y]))
             elif {'lat1','lon1','lat2','lon2'} <= set(pillar_entry.keys()):
-                ax, ay = _project_wgs84_guess(pillar_entry['lat1'], pillar_entry['lon1'])
-                bx, by = _project_wgs84_guess(pillar_entry['lat2'], pillar_entry['lon2'])
+                ax, ay = _project_wgs84(pillar_entry['lat1'], pillar_entry['lon1'])
+                bx, by = _project_wgs84(pillar_entry['lat2'], pillar_entry['lon2'])
                 pts.extend([np.array([ax, ay]), np.array([bx, by])])
         # list-of-points case
         elif (isinstance(pillar_entry, (list, tuple)) and len(pillar_entry) >= 2 
               and all(isinstance(p, (list, tuple)) and len(p) >= 2 for p in pillar_entry[:2])):
             a, b = pillar_entry[0], pillar_entry[1]
-            ax, ay = _project_wgs84_guess(a[0], a[1])
-            bx, by = _project_wgs84_guess(b[0], b[1])
+            ax, ay = _project_wgs84(a[0], a[1])
+            bx, by = _project_wgs84(b[0], b[1])
             pts.extend([np.array([ax, ay]), np.array([bx, by])])
         return pts
 

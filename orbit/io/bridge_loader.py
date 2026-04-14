@@ -62,6 +62,7 @@ class BridgeDataLoader:
         # Initialize coordinate system preferences to prevent crashes
         self.last_coord_system = None
         self.last_custom_epsg = None
+        self.last_input_epsg = None
         self.last_swap_xy = False
         self.last_selected_file = None
 
@@ -690,6 +691,7 @@ class BridgeDataLoader:
             "file_path": file_path,
             "coordinate_system": getattr(self, "last_coord_system", None),
             "custom_epsg": getattr(self, "last_custom_epsg", None),
+            "input_epsg": getattr(self, "last_input_epsg", None),
             "swap_xy": bool(getattr(self, "last_swap_xy", False)),
         }
 
@@ -703,6 +705,8 @@ class BridgeDataLoader:
                 self.last_coord_system = coord
             if import_options.get("custom_epsg") not in (None, ""):
                 self.last_custom_epsg = int(import_options.get("custom_epsg"))
+            if import_options.get("input_epsg") not in (None, ""):
+                self.last_input_epsg = int(import_options.get("input_epsg"))
             if "swap_xy" in import_options:
                 self.last_swap_xy = bool(import_options.get("swap_xy"))
             fp = import_options.get("file_path")
@@ -710,6 +714,69 @@ class BridgeDataLoader:
                 self.last_selected_file = Path(fp)
         except Exception as e:
             debug_print(f"[BRIDGE_OPTS] Failed to apply import options: {e}")
+
+    def _bridge_points_look_like_belgium(self, bridge: Optional[Bridge], context: Optional[ProjectContext], sample_size: int = 5) -> bool:
+        """
+        Quick plausibility check in WGS84 for Belgian datasets.
+        Returns True when at least one sampled trajectory point lands in Belgium bounds.
+        """
+        try:
+            if bridge is None or context is None:
+                return False
+            traj = getattr(getattr(bridge, "trajectory", None), "points", None)
+            proj2wgs = getattr(context, "project_to_wgs84", None)
+            if traj is None or getattr(traj, "size", 0) == 0 or not callable(proj2wgs):
+                return False
+
+            n = min(len(traj), max(1, int(sample_size)))
+            for i in range(n):
+                row = traj[i]
+                x = float(row[0]); y = float(row[1])
+                z = float(row[2]) if len(row) >= 3 else 0.0
+                lon, lat, _ = proj2wgs(x, y, z)
+                if 49.0 <= float(lat) <= 52.0 and 2.0 <= float(lon) <= 7.5:
+                    return True
+        except Exception:
+            return False
+        return False
+
+    def _retry_lambert_input_epsg_if_needed(
+        self,
+        bridge_file: Path,
+        bridge: Bridge,
+        context: ProjectContext,
+        input_epsg: Optional[int],
+        bridge_name: str,
+    ) -> Tuple[Bridge, Optional[int]]:
+        """
+        Compatibility fallback for Belgian Lambert imports:
+        if chosen Lambert input EPSG yields implausible WGS84 placement (ocean),
+        retry once with the alternate Lambert EPSG (31370 <-> 3812).
+        """
+        try:
+            if input_epsg not in (31370, 3812):
+                return bridge, input_epsg
+
+            if self._bridge_points_look_like_belgium(bridge, context):
+                return bridge, input_epsg
+
+            alt_epsg = 31370 if int(input_epsg) == 3812 else 3812
+            debug_print(
+                f"[CRS_AUTOFIX] Loaded geometry looks implausible for EPSG:{input_epsg}. "
+                f"Retrying import with EPSG:{alt_epsg}."
+            )
+
+            alt_bridge = load_bridge(bridge_file, context, alt_epsg)
+            alt_bridge.name = bridge_name
+            if self._bridge_points_look_like_belgium(alt_bridge, context):
+                debug_print(
+                    f"[CRS_AUTOFIX] Using EPSG:{alt_epsg} as input CRS for this import "
+                    f"(project CRS remains unchanged)."
+                )
+                return alt_bridge, alt_epsg
+        except Exception as e:
+            debug_print(f"[CRS_AUTOFIX] Retry failed: {e}")
+        return bridge, input_epsg
 
     def load_bridge_data(self, selected_file: Optional[Path] = None, import_options: Optional[Dict[str, Any]] = None) -> Tuple[Optional[Bridge], Optional[ProjectContext]]:
         """Load selected bridge data while honoring the CRS chosen in the file dialog.
@@ -763,18 +830,23 @@ class BridgeDataLoader:
             custom_epsg = getattr(self, 'last_custom_epsg', None)
             if coord_key == "custom" and custom_epsg:
                 debug_print(f"[DEBUG] Using custom EPSG: {custom_epsg}")
-            # Use ellipsoid height, vertical datum handled by heightStartingPoint
-            context = CoordinateSystemRegistry.create_project_context(coord_key, 'ellipsoid', custom_epsg, ground_elevation)
-            # If Tab-0 had no epsg_code, backfill it (in-memory) from registry so downstream code can use it
             try:
-                info = CoordinateSystemRegistry.get_system_info(coord_key) or {}
-                epsg_from_dialog = int(info.get('epsg') or info.get('EPSG'))
-                if 'epsg_code' not in self.project_data or self.project_data.get('epsg_code') in (None, '', 0):
-                    self.project_data['epsg_code'] = epsg_from_dialog
-                    debug_print(f"[DEBUG] Backfilled epsg_code from dialog mapping: {epsg_from_dialog}")
-            except Exception:
-                pass
-        else:
+                # Use ellipsoid height, vertical datum handled by heightStartingPoint
+                context = CoordinateSystemRegistry.create_project_context(coord_key, 'ellipsoid', custom_epsg, ground_elevation)
+                # If Tab-0 had no epsg_code, backfill it (in-memory) from registry so downstream code can use it
+                try:
+                    info = CoordinateSystemRegistry.get_system_info(coord_key) or {}
+                    epsg_from_dialog = int(info.get('epsg') or info.get('EPSG'))
+                    if 'epsg_code' not in self.project_data or self.project_data.get('epsg_code') in (None, '', 0):
+                        self.project_data['epsg_code'] = epsg_from_dialog
+                        debug_print(f"[DEBUG] Backfilled epsg_code from dialog mapping: {epsg_from_dialog}")
+                except Exception:
+                    pass
+            except Exception as e:
+                debug_print(f"[DEBUG] Invalid dialog CRS '{coord_key}' ({e}); falling back to Tab-0 EPSG.")
+                context = None
+
+        if context is None:
             # Fallback to Tab-0
             epsg_code = int(project_data.get("epsg_code", 4326))
             vertical_ref = str(project_data.get("vertical_reference", "AGL"))
@@ -836,6 +908,7 @@ class BridgeDataLoader:
                 if input_epsg is None:
                     input_epsg = int(self.project_data.get("epsg_code", 4326))
                     debug_print(f"[DEBUG] (fallback) input_epsg from Tab-0: {input_epsg}")
+                self.last_input_epsg = input_epsg
 
                 # Diagnostics: importer reprojection vs identity
                 target_epsg: Optional[int] = None
@@ -857,6 +930,49 @@ class BridgeDataLoader:
                 # Load via importer
                 bridge = load_bridge(bridge_file, context, input_epsg)
                 bridge.name = bridge_name
+
+                # Optional compatibility fallback for historical Lambert72/Lambert2008 mixups.
+                # Default is strict: trust the user-selected CRS and do not auto-switch.
+                enable_auto_crs_retry = bool((import_options or {}).get("auto_crs_retry", False))
+                if enable_auto_crs_retry:
+                    bridge, input_epsg = self._retry_lambert_input_epsg_if_needed(
+                        bridge_file, bridge, context, input_epsg, bridge_name
+                    )
+                    self.last_input_epsg = input_epsg
+                else:
+                    # Interactive safeguard: if selected Lambert input EPSG looks implausible,
+                    # ask user before trying the alternate Lambert EPSG.
+                    try:
+                        if input_epsg in (31370, 3812) and not self._bridge_points_look_like_belgium(bridge, context):
+                            alt_epsg = 31370 if int(input_epsg) == 3812 else 3812
+                            do_retry = False
+
+                            if self.parent is not None:
+                                msg = (
+                                    f"The imported geometry with EPSG:{input_epsg} appears in an implausible location "
+                                    f"(for example, over ocean).\n\n"
+                                    f"Try EPSG:{alt_epsg} as the SOURCE CRS for this file?\n"
+                                    f"Project CRS will remain unchanged."
+                                )
+                                reply = QMessageBox.question(
+                                    self.parent,
+                                    "Coordinate System Mismatch Suspected",
+                                    msg,
+                                    QMessageBox.Yes | QMessageBox.No,
+                                    QMessageBox.Yes,
+                                )
+                                do_retry = (reply == QMessageBox.Yes)
+                            else:
+                                do_retry = False
+
+                            if do_retry:
+                                bridge, input_epsg = self._retry_lambert_input_epsg_if_needed(
+                                    bridge_file, bridge, context, input_epsg, bridge_name
+                                )
+                                self.last_input_epsg = input_epsg
+                    except Exception as e:
+                        debug_print(f"[CRS_AUTOFIX] Interactive fallback failed: {e}")
+
                 self.last_selected_file = bridge_file
                 debug_print(f"[DEBUG] Loaded {bridge_file.name} as '{bridge_name}'")
 

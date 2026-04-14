@@ -150,20 +150,21 @@
     // Map setup
     const map = L.map("map", { preferCanvas: true }).setView([50.85, 4.35], 8);
     // Base layers (match flight_map.html behavior, maxZoom 30)
-    const osmLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    const osmLayer = L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
       maxZoom: 30,
-      attribution: "&copy; OpenStreetMap contributors"
+      subdomains: ["mt0", "mt1", "mt2", "mt3"],
+      attribution: "Map data &copy; Google"
     });
     const satelliteLayer = L.tileLayer("https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
       maxZoom: 30,
       subdomains: ["mt0", "mt1", "mt2", "mt3"],
-      attribution: "Imagery © Google"
+      attribution: "Imagery &copy; Google"
     });
-    // Default to OSM to mimic existing simple map default
+    // Default to street layer
     osmLayer.addTo(map);
     // Layer control toggle
     L.control.layers({
-      "OpenStreetMap": osmLayer,
+      "Street": osmLayer,
       "Satellite": satelliteLayer
     }).addTo(map);
     const markerLayer = L.layerGroup().addTo(map);

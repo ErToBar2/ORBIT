@@ -611,9 +611,9 @@ class OrbitFlightExporter:
         """
         transformed_waypoints = []
         
-        # Method 1: Use direct transformation function if available
-        if hasattr(self.app, 'local_metric_to_wgs84') and self.app.local_metric_to_wgs84:
-            debug_print("   🔄 Using direct local_metric_to_wgs84 transformation")
+        # Method 1: Use app's canonical active-metric -> WGS84 converter if available
+        if hasattr(self.app, '_active_metric_to_wgs84') and callable(getattr(self.app, '_active_metric_to_wgs84', None)):
+            debug_print("   🔄 Using app._active_metric_to_wgs84 transformation")
             
             for waypoint in waypoints:
                 if len(waypoint) < 3:
@@ -623,13 +623,34 @@ class OrbitFlightExporter:
                 tag = waypoint[3] if len(waypoint) >= 4 else "unknown"
                 
                 try:
-                    lat, lon, alt = self.app.local_metric_to_wgs84(x, y, z)
+                    lat, lon, alt = self.app._active_metric_to_wgs84(x, y, z)
                     transformed_waypoints.append([lat, lon, alt, tag])
                 except Exception as e:
                     debug_print(f"   ⚠️  Failed to transform point {x:.2f}, {y:.2f}: {e}")
                     continue
             
             debug_print(f"   ✅ Transformed {len(transformed_waypoints)} waypoints using direct function")
+            return transformed_waypoints
+
+        # Method 1b: legacy direct converter if available (returns lon, lat, alt)
+        if hasattr(self.app, 'local_metric_to_wgs84') and self.app.local_metric_to_wgs84:
+            debug_print("   🔄 Using legacy local_metric_to_wgs84 transformation")
+
+            for waypoint in waypoints:
+                if len(waypoint) < 3:
+                    continue
+
+                x, y, z = waypoint[0], waypoint[1], waypoint[2]
+                tag = waypoint[3] if len(waypoint) >= 4 else "unknown"
+
+                try:
+                    lon, lat, alt = self.app.local_metric_to_wgs84(x, y, z)
+                    transformed_waypoints.append([lat, lon, alt, tag])
+                except Exception as e:
+                    debug_print(f"   ⚠️  Failed to transform point {x:.2f}, {y:.2f}: {e}")
+                    continue
+
+            debug_print(f"   ✅ Transformed {len(transformed_waypoints)} waypoints using legacy function")
             return transformed_waypoints
         
         # Method 2: Manual transformation using bridge center

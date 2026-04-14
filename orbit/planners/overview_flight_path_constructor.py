@@ -1264,11 +1264,12 @@ class FlightPathConstructor:
                             lat, lng = point[0], point[1]
                             # Prefer the same local-metric transform that was used for the flight-route geometry
                             # Convert each point from WGS84 to the project coordinate system
-                            if hasattr(self.app, '_last_transform_func') and self.app._last_transform_func:
-                                x, y, _ = self.app._last_transform_func(lat, lng, 0)
+                            if hasattr(self.app, '_wgs84_to_active_metric') and callable(getattr(self.app, '_wgs84_to_active_metric', None)):
+                                x, y, _ = self.app._wgs84_to_active_metric(lat, lng, 0.0)
+                            elif hasattr(self.app, '_last_transform_func') and self.app._last_transform_func:
+                                x, y, _ = self.app._last_transform_func(lat, lng, 0.0)
                             elif hasattr(self.app, 'current_context') and self.app.current_context:
-                                # Fall back to project context CRS
-                                x, y, _ = self.app.current_context.wgs84_to_project(lng, lat, 0)
+                                x, y, _ = self.app.current_context.wgs84_to_project(lng, lat, 0.0)
                             else:
                                 # Absolute fallback – leave in degrees so that we do not crash
                                 x, y = lng, lat
