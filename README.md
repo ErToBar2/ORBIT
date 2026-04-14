@@ -24,20 +24,19 @@ Key research-relevant capabilities:
 
 ### 1. Import bridge data in the project coordinate system
 
-ORBIT starts from bridge-specific inspection inputs such as trajectory points, pillar locations, width, and project metadata. The import workflow is coordinate-system aware and intended for engineering data rather than consumer-map-only planning.
+ORBIT starts from bridge-specific inspection inputs such as trajectory points, pillar locations, width, and project metadata. The import workflow is coordinate-system aware and the user may enter any known data, such as 2D or 3D points of the bridge trajectory (centre line), position of pillars and width of the bridge. 
 
 <img width="1928" height="1035" alt="1_start- Data import option chosing EPSG code " src="https://github.com/user-attachments/assets/10e857e2-c005-45b4-8ee8-15f02d015120" />
 
 ### 2. Reconstruct bridge geometry from a cross-section
 
-The tool supports importing a bridge cross-section and using it to build the geometric basis for later route generation. This makes the planning stage more explicit and reproducible for research workflows that need a well-defined inspection model.
+To reconstruct the geometry, ORBIT detects a blue filling of any cross section drawing and therefore is easy to use, flexible and effective. 
 
 <img width="1918" height="1153" alt="2_ start - importing CV crosssection extraction" src="https://github.com/user-attachments/assets/a1d7e6b6-1b95-4bef-b954-a2337353be02" />
 
-
 ### 3. Define safety zones on the satellite map
 
-ORBIT lets the user place bridge geometry and operational constraints in map context. Safety zones can be drawn and adjusted directly, which is useful when comparing route strategies, access assumptions, or inspection policies.
+ORBIT lets the user place bridge geometry and operational constraints on a satellite map. Safety zones can be drawn e.g. to avoid trees and electrical powerlines.
 
 <img width="1920" height="1157" alt="3 Satellite image safety zone mapping" src="https://github.com/user-attachments/assets/d5817d6f-298d-4739-997a-93ea58a22872" />
 
@@ -51,15 +50,13 @@ The final planning stage brings the model, safety zones, and route definitions t
 
 ORBIT is useful as a starting point for work on:
 
-- automated or semi-automated bridge inspection planning,
 - photogrammetric mission design for condition assessment,
-- crack and damage detection data acquisition,
-- benchmark generation for route planning in constrained environments,
+- damage detection data acquisition,
+- automated or semi-automated bridge inspection planning,
 - GNSS-denied or GNSS-degraded infrastructure inspection,
-- bridge digital twins and inspection data integration,
-- comparison of inspection strategies across bridge types and access conditions.
+- bridge digital twinning,
 
-In short: ORBIT gives researchers a concrete mission-planning workflow for difficult inspection scenarios rather than only a visualization demo or a generic waypoint editor.
+In short: ORBIT gives researchers a concrete mission-planning workflow for difficult inspection scenarios rather than only a visualization demo or a generic waypoint editor. The tool and method has been proven in over 30+ bridge project to be effective and deliver high quality results. 
 
 ## Publication
 
